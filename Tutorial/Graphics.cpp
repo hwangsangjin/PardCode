@@ -1,4 +1,5 @@
 #include "Graphics.h"
+#include "SwapChain.h"
 #include <cassert>
 
 bool Graphics::Initialize()
@@ -32,11 +33,19 @@ bool Graphics::Initialize()
     assert(m_feature_level);
     assert(m_immediate_context);
 
+    m_d3d_device->QueryInterface(__uuidof(IDXGIDevice), (void**)&m_dxgi_device);
+    m_dxgi_device->GetParent(__uuidof(IDXGIAdapter), (void**)&m_dxgi_adapter);
+    m_dxgi_adapter->GetParent(__uuidof(IDXGIFactory), (void**)&m_dxgi_factory);
+
+
     return true;
 }
 
 bool Graphics::Release()
 {
+    m_dxgi_factory->Release();
+    m_dxgi_adapter->Release();
+    m_dxgi_device->Release();
     m_immediate_context->Release();
     m_d3d_device->Release();
 
@@ -47,4 +56,19 @@ Graphics* Graphics::GetInstance()
 {
     static Graphics instance;
     return &instance;
+}
+
+ID3D11Device* Graphics::GetD3DDevice() const
+{
+    return m_d3d_device;
+}
+
+IDXGIFactory* Graphics::GetDXGIFactory() const
+{
+    return m_dxgi_factory;
+}
+
+SwapChain* Graphics::CreateSwapChain()
+{
+    return new SwapChain();
 }

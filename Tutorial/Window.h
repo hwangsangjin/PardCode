@@ -5,13 +5,13 @@
 class Window
 {
 public:
-	Window() = default;
-	~Window() = default;
-
 	bool Initialize();
 	bool Broadcast();
 	bool IsRunning();
 	bool Release();
+
+	RECT GetClientWindowRect() const;
+	void SetWindowHandle(HWND hwnd);
 
 	virtual void OnCreate();
 	virtual void OnUpdate();

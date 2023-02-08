@@ -1,23 +1,27 @@
 #include "Window.h"
 #include <cassert>
 
-Window* g_window = nullptr;
-
 LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam)
 {
     switch (msg)
     {
     case WM_CREATE:
+    {
         // 윈도우가 생성될 때 실행되는 이벤트
-        g_window->OnCreate();
+        Window* window = (Window*)((LPCREATESTRUCT)lparam)->lpCreateParams;
+        SetWindowLongPtr(hwnd, GWLP_USERDATA, (LONG_PTR)window);
+        window->SetWindowHandle(hwnd);
+        window->OnCreate();
         break;
-
+    }
     case WM_DESTROY:
-        //윈도우가 소멸될 때 실행되는 이벤트
-        g_window->OnDestroy();
+    {
+        // 윈도우가 소멸될 때 실행되는 이벤트
+        Window* window = (Window*)GetWindowLongPtr(hwnd, GWLP_USERDATA);
+        window->OnDestroy();
         ::PostQuitMessage(0);
         break;
-
+    }
     default:
         return ::DefWindowProc(hwnd, msg, wparam, lparam);
     }
@@ -43,10 +47,6 @@ bool Window::Initialize()
     wc.lpfnWndProc = &WndProc;
     assert(::RegisterClassEx(&wc));
 
-    // 윈도우 프로시저에서 사용할 수 있도록 전역 포인터 변수에 주소 저장
-    assert(!g_window);
-    g_window = this;
-
     // 윈도우 생성
     m_hwnd = ::CreateWindowEx(WS_EX_OVERLAPPEDWINDOW, L"Tutorial", L"Tutorial", WS_OVERLAPPEDWINDOW, CW_USEDEFAULT, CW_USEDEFAULT, 1024, 768, NULL, NULL, NULL, this);
     assert(m_hwnd);
@@ -63,6 +63,8 @@ bool Window::Initialize()
 
 bool Window::Broadcast()
 {
+    OnUpdate();
+
     MSG msg;
     while (::PeekMessage(&msg, NULL,0, 0, PM_REMOVE) > 0)
     {
@@ -70,9 +72,7 @@ bool Window::Broadcast()
         DispatchMessage(&msg);
     }
 
-    g_window->OnUpdate();
-
-    ::Sleep(0);
+    ::Sleep(1);
 
     return true;
 }
@@ -86,6 +86,18 @@ bool Window::Release()
 {
     assert(::DestroyWindow(m_hwnd));
     return true;
+}
+
+RECT Window::GetClientWindowRect() const
+{
+    RECT rc;
+    ::GetClientRect(m_hwnd, &rc);
+    return rc;
+}
+
+void Window::SetWindowHandle(HWND hwnd)
+{
+    m_hwnd = hwnd;
 }
 
 void Window::OnCreate()

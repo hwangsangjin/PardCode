@@ -13,6 +13,9 @@
     <Filter Include="Engine\Graphics">
       <UniqueIdentifier>{8706107b-a603-48a4-aa77-2f957e2dd6f9}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Engine\Graphics\SwapChain">
+      <UniqueIdentifier>{13e9d9b5-62b5-411a-b592-39082fed41d1}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -27,6 +30,9 @@
     <ClCompile Include="Graphics.cpp">
       <Filter>Engine\Graphics</Filter>
     </ClCompile>
+    <ClCompile Include="SwapChain.cpp">
+      <Filter>Engine\Graphics\SwapChain</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="App.h">
@@ -37,6 +43,9 @@
     </ClInclude>
     <ClInclude Include="Graphics.h">
       <Filter>Engine\Graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="SwapChain.h">
+      <Filter>Engine\Graphics\SwapChain</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

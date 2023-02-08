@@ -1,16 +1,17 @@
 #pragma once
 
 #include "Window.h"
-#include "Graphics.h"
+
+class SwapChain;
 
 class App : public Window
 {
 public:
-	App() = default;
-	~App() = default;
-
 	virtual void OnCreate() override;
 	virtual void OnUpdate() override;
 	virtual void OnDestroy() override;
+
+private:
+	SwapChain* m_swap_chain;
 };
 
