@@ -3,9 +3,9 @@
 int main()
 {
 	App app;
-	if (app.Init())
+	if (app.Initialize())
 	{
-		while (app.IsRun())
+		while (app.IsRunning())
 		{
 			app.Broadcast();
 		}

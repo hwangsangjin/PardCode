@@ -25,7 +25,7 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam)
     return NULL;
 }
 
-bool Window::Init()
+bool Window::Initialize()
 {
     // WNDCLASSEX 객체 설정
     WNDCLASSEX wc;
@@ -56,7 +56,7 @@ bool Window::Init()
     ::UpdateWindow(m_hwnd);
 
     // 윈도우 실행 플래그를 true로 설정
-    m_is_run = true;
+    m_is_running = true;
 
     return true;
 }
@@ -77,9 +77,9 @@ bool Window::Broadcast()
     return true;
 }
 
-bool Window::IsRun()
+bool Window::IsRunning()
 {
-    return m_is_run;
+    return m_is_running;
 }
 
 bool Window::Release()
@@ -88,7 +88,15 @@ bool Window::Release()
     return true;
 }
 
+void Window::OnCreate()
+{
+}
+
+void Window::OnUpdate()
+{
+}
+
 void Window::OnDestroy()
 {
-    m_is_run = false;
+    m_is_running = false;
 }
