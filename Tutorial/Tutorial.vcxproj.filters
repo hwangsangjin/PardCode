@@ -16,6 +16,9 @@
     <Filter Include="Engine\Graphics\SwapChain">
       <UniqueIdentifier>{13e9d9b5-62b5-411a-b592-39082fed41d1}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Engine\Graphics\DeviceContext">
+      <UniqueIdentifier>{88ff53a5-e318-4df6-94c1-ff78c406f691}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -24,14 +27,17 @@
     <ClCompile Include="App.cpp">
       <Filter>App</Filter>
     </ClCompile>
-    <ClCompile Include="Window.cpp">
-      <Filter>Engine\Window</Filter>
-    </ClCompile>
     <ClCompile Include="Graphics.cpp">
       <Filter>Engine\Graphics</Filter>
     </ClCompile>
     <ClCompile Include="SwapChain.cpp">
       <Filter>Engine\Graphics\SwapChain</Filter>
+    </ClCompile>
+    <ClCompile Include="DeviceContext.cpp">
+      <Filter>Engine\Graphics\DeviceContext</Filter>
+    </ClCompile>
+    <ClCompile Include="Window.cpp">
+      <Filter>Engine\Window</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -46,6 +52,9 @@
     </ClInclude>
     <ClInclude Include="SwapChain.h">
       <Filter>Engine\Graphics\SwapChain</Filter>
+    </ClInclude>
+    <ClInclude Include="DeviceContext.h">
+      <Filter>Engine\Graphics\DeviceContext</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

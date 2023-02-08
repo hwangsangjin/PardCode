@@ -1,5 +1,6 @@
 #include "Graphics.h"
 #include "SwapChain.h"
+#include "DeviceContext.h"
 #include <cassert>
 
 bool Graphics::Initialize()
@@ -18,9 +19,10 @@ bool Graphics::Initialize()
     };
     UINT num_feature_levels = ARRAYSIZE(feature_levels);
 
+    ID3D11DeviceContext* immediate_context = nullptr;
     for (UINT driver_type_index = 0; driver_type_index < num_driver_types; driver_type_index++)
     {
-        HRESULT hr = D3D11CreateDevice(NULL, driver_types[driver_type_index], NULL, NULL, feature_levels, num_feature_levels, D3D11_SDK_VERSION, &m_d3d_device, &m_feature_level, &m_immediate_context);
+        HRESULT hr = D3D11CreateDevice(NULL, driver_types[driver_type_index], NULL, NULL, feature_levels, num_feature_levels, D3D11_SDK_VERSION, &m_d3d_device, &m_feature_level, &immediate_context);
         if (SUCCEEDED(hr))
         {
             break;
@@ -31,7 +33,9 @@ bool Graphics::Initialize()
 
     assert(m_d3d_device);
     assert(m_feature_level);
-    assert(m_immediate_context);
+    assert(immediate_context);
+
+    m_device_context = new DeviceContext(immediate_context);
 
     m_d3d_device->QueryInterface(__uuidof(IDXGIDevice), (void**)&m_dxgi_device);
     m_dxgi_device->GetParent(__uuidof(IDXGIAdapter), (void**)&m_dxgi_adapter);
@@ -46,7 +50,7 @@ bool Graphics::Release()
     m_dxgi_factory->Release();
     m_dxgi_adapter->Release();
     m_dxgi_device->Release();
-    m_immediate_context->Release();
+    m_device_context->Release();
     m_d3d_device->Release();
 
     return true;
@@ -71,4 +75,9 @@ IDXGIFactory* Graphics::GetDXGIFactory() const
 SwapChain* Graphics::CreateSwapChain()
 {
     return new SwapChain();
+}
+
+DeviceContext* Graphics::GetDeviceContext() const
+{
+    return m_device_context;
 }

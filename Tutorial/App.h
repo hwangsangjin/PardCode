@@ -12,6 +12,6 @@ public:
 	virtual void OnDestroy() override;
 
 private:
-	SwapChain* m_swap_chain;
+	SwapChain* m_swap_chain = nullptr;
 };
 

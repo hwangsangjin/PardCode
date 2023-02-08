@@ -24,6 +24,23 @@ bool SwapChain::Initialize(HWND hwnd, UINT width, UINT height)
     Graphics::GetInstance()->GetDXGIFactory()->CreateSwapChain(device, &desc, &m_dxgi_swap_chain);
     assert(&m_dxgi_swap_chain);
 
+    // 후면 버퍼 색상을 가져와서 렌더 타겟 뷰를 생성
+    ID3D11Texture2D* buffer = nullptr;
+    m_dxgi_swap_chain->GetBuffer(0, __uuidof(ID3D11Texture2D), (void**)&buffer);
+    assert(buffer);
+
+    device->CreateRenderTargetView(buffer, nullptr, &m_render_target_view);
+    assert(m_render_target_view);
+
+    buffer->Release();
+
+    return true;
+}
+
+bool SwapChain::Present(bool vsync)
+{
+    m_dxgi_swap_chain->Present(vsync, NULL);
+
     return true;
 }
 
@@ -33,4 +50,9 @@ bool SwapChain::Release()
     delete this;
 
     return true;
+}
+
+ID3D11RenderTargetView* SwapChain::GetRenderTargetView() const
+{
+    return m_render_target_view;
 }
