@@ -26,8 +26,9 @@ void App::OnCreate()
 	Vertex vertices[] =
 	{
 		{ -0.5f, -0.5f, 0.0f },
-		{ 0.0f, 0.5f, 0.0f },
-		{ 0.5f, -0.5f, 0.0f }
+		{ -0.5f, 0.5f, 0.0f },
+		{ 0.5f, -0.5f, 0.0f },
+		{ 0.5f, 0.5f, 0.0f }
 	};
 	UINT vertex_size = ARRAYSIZE(vertices);
 
@@ -57,7 +58,7 @@ void App::OnUpdate()
 	Graphics::GetInstance()->GetDeviceContext()->SetVertexBuffer(m_vertex_buffer);
 
 	// 삼각형 그리기
-	Graphics::GetInstance()->GetDeviceContext()->DrawTriangleList(m_vertex_buffer->GetVertexSize(), 0);
+	Graphics::GetInstance()->GetDeviceContext()->DrawTriangleStrip(m_vertex_buffer->GetVertexSize(), 0);
 	m_swap_chain->Present(false);
 }
 
