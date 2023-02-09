@@ -19,14 +19,14 @@
     <Filter Include="Engine\Graphics\VertexBuffer">
       <UniqueIdentifier>{9cf52aa4-5fad-4303-b5ac-73a948c0e99d}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Engine\Graphics\Shader">
-      <UniqueIdentifier>{cab707e1-c6dc-4de2-8527-42de403d7cdc}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Engine\Graphics\SwapChain">
       <UniqueIdentifier>{13e9d9b5-62b5-411a-b592-39082fed41d1}</UniqueIdentifier>
     </Filter>
     <Filter Include="Engine\Graphics\VertexShader">
       <UniqueIdentifier>{91ace5bb-3494-4961-a8c3-0222b4703f20}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Engine\Graphics\PixelShader">
+      <UniqueIdentifier>{11143976-dd06-49a5-9274-e0a05177a32a}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -54,6 +54,9 @@
     <ClCompile Include="VertexShader.cpp">
       <Filter>Engine\Graphics\VertexShader</Filter>
     </ClCompile>
+    <ClCompile Include="PixelShader.cpp">
+      <Filter>Engine\Graphics\PixelShader</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="App.h">
@@ -77,15 +80,16 @@
     <ClInclude Include="VertexShader.h">
       <Filter>Engine\Graphics\VertexShader</Filter>
     </ClInclude>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="shader.fx">
-      <Filter>Engine\Graphics\Shader</Filter>
-    </None>
+    <ClInclude Include="PixelShader.h">
+      <Filter>Engine\Graphics\PixelShader</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="VertexShader.hlsl">
       <Filter>Engine\Graphics\VertexShader</Filter>
+    </FxCompile>
+    <FxCompile Include="PixelShader.hlsl">
+      <Filter>Engine\Graphics\PixelShader</Filter>
     </FxCompile>
   </ItemGroup>
 </Project>

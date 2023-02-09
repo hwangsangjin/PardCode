@@ -5,6 +5,7 @@
 #include "DeviceContext.h"
 #include "VertexBuffer.h"
 #include "VertexShader.h"
+#include "PixelShader.h"
 
 void Graphics::Initialize()
 {
@@ -46,8 +47,6 @@ void Graphics::Initialize()
 
 void Graphics::Release()
 {
-    m_pixel_shader->Release();
-    m_pixel_shader_blob->Release();
     m_dxgi_factory->Release();
     m_dxgi_adapter->Release();
     m_dxgi_device->Release();
@@ -95,6 +94,14 @@ VertexShader* Graphics::CreateVertexShader(const void* shader_byte_code, size_t 
     return vertex_shader;
 }
 
+PixelShader* Graphics::CreatePixelShader(const void* shader_byte_code, size_t byte_code_size)
+{
+    PixelShader* pixel_shader = new PixelShader();
+    pixel_shader->Initialize(shader_byte_code, byte_code_size);
+    assert(pixel_shader);
+    return pixel_shader;
+}
+
 void Graphics::CompileVertexShader(const wchar_t* file_name, const char* entry_point_name, void** shader_byte_code, size_t* byte_code_size)
 {
     ID3DBlob* error_blob = nullptr;
@@ -105,20 +112,17 @@ void Graphics::CompileVertexShader(const wchar_t* file_name, const char* entry_p
     *byte_code_size = m_blob->GetBufferSize();
 }
 
+void Graphics::CompilePixelShader(const wchar_t* file_name, const char* entry_point_name, void** shader_byte_code, size_t* byte_code_size)
+{
+    ID3DBlob* error_blob = nullptr;
+    ::D3DCompileFromFile(file_name, nullptr, nullptr, entry_point_name, "ps_5_0", 0, 0, &m_blob, &error_blob);
+    assert(m_blob);
+
+    *shader_byte_code = m_blob->GetBufferPointer();
+    *byte_code_size = m_blob->GetBufferSize();
+}
+
 void Graphics::ReleaseCompiledShader()
 {
     m_blob->Release();
-}
-
-void Graphics::CreateShaders()
-{
-    ID3DBlob* error_blob = nullptr;
-    ::D3DCompileFromFile(L"Shader.fx", nullptr, nullptr, "psmain", "ps_5_0", NULL, NULL, &m_pixel_shader_blob, &error_blob);
-    m_d3d_device->CreatePixelShader(m_pixel_shader_blob->GetBufferPointer(), m_pixel_shader_blob->GetBufferSize(), nullptr, &m_pixel_shader);
-    assert(m_pixel_shader);
-}
-
-void Graphics::SetShaders()
-{
-    m_immediate_context->PSSetShader(m_pixel_shader, nullptr, 0);
 }

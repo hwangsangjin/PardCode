@@ -10,6 +10,8 @@ void VertexShader::Initialize(const void* shader_byte_code, size_t byte_code_siz
 
 void VertexShader::Release()
 {
+	m_vertex_shader->Release();
+	delete this;
 }
 
 ID3D11VertexShader* VertexShader::GetVertexShader() const

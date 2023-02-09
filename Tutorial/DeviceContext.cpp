@@ -3,6 +3,7 @@
 #include "SwapChain.h"
 #include "VertexBuffer.h"
 #include "VertexShader.h"
+#include "PixelShader.h"
 
 DeviceContext::DeviceContext(ID3D11DeviceContext* device_context)
 	: m_device_context(device_context)
@@ -38,12 +39,12 @@ void DeviceContext::DrawTriangleStrip(UINT vertex_count, UINT start_vertex_index
 	m_device_context->Draw(vertex_count, start_vertex_index);
 }
 
-void DeviceContext::SetViewportSize(float width, float height)
+void DeviceContext::SetViewportSize(UINT width, UINT height)
 {
 	// 뷰포트 구조체
 	D3D11_VIEWPORT viewport = {};
-	viewport.Width = static_cast<float>(width);
-	viewport.Height = static_cast<float>(height);
+	viewport.Width = static_cast<UINT>(width);
+	viewport.Height = static_cast<UINT>(height);
 	viewport.MinDepth = 0.0f;
 	viewport.MaxDepth = 1.0f;
 
@@ -54,6 +55,11 @@ void DeviceContext::SetViewportSize(float width, float height)
 void DeviceContext::SetVertexShader(VertexShader* vertex_shader)
 {
 	m_device_context->VSSetShader(vertex_shader->GetVertexShader(), nullptr, 0);
+}
+
+void DeviceContext::SetPixelShader(PixelShader* pixel_shader)
+{
+	m_device_context->PSSetShader(pixel_shader->GetPixelShader(), nullptr, 0);
 }
 
 void DeviceContext::Release()

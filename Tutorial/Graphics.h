@@ -6,6 +6,7 @@ class SwapChain;
 class DeviceContext;
 class VertexBuffer;
 class VertexShader;
+class PixelShader;
 
 class Graphics
 {
@@ -20,10 +21,10 @@ public:
 	SwapChain* CreateSwapChain();
 	VertexBuffer* CreateVertexBuffer();
 	VertexShader* CreateVertexShader(const void* shader_byte_code, size_t byte_code_size);
+	PixelShader* CreatePixelShader(const void* shader_byte_code, size_t byte_code_size);
 	void CompileVertexShader(const wchar_t* file_name, const char* entry_point_name, void** shader_byte_code, size_t* byte_code_size);
+	void CompilePixelShader(const wchar_t* file_name, const char* entry_point_name, void** shader_byte_code, size_t* byte_code_size);
 	void ReleaseCompiledShader();
-	void CreateShaders();
-	void SetShaders();
 
 private:
 	ID3D11Device* m_d3d_device = nullptr;
