@@ -13,11 +13,17 @@
     <Filter Include="Engine\Graphics">
       <UniqueIdentifier>{8706107b-a603-48a4-aa77-2f957e2dd6f9}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Engine\Graphics\SwapChain">
-      <UniqueIdentifier>{13e9d9b5-62b5-411a-b592-39082fed41d1}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Engine\Graphics\DeviceContext">
       <UniqueIdentifier>{88ff53a5-e318-4df6-94c1-ff78c406f691}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Engine\Graphics\VertexBuffer">
+      <UniqueIdentifier>{9cf52aa4-5fad-4303-b5ac-73a948c0e99d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Engine\Graphics\Shader">
+      <UniqueIdentifier>{cab707e1-c6dc-4de2-8527-42de403d7cdc}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Engine\Graphics\SwapChain">
+      <UniqueIdentifier>{13e9d9b5-62b5-411a-b592-39082fed41d1}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -39,6 +45,9 @@
     <ClCompile Include="Window.cpp">
       <Filter>Engine\Window</Filter>
     </ClCompile>
+    <ClCompile Include="VertexBuffer.cpp">
+      <Filter>Engine\Graphics\VertexBuffer</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="App.h">
@@ -56,5 +65,13 @@
     <ClInclude Include="DeviceContext.h">
       <Filter>Engine\Graphics\DeviceContext</Filter>
     </ClInclude>
+    <ClInclude Include="VertexBuffer.h">
+      <Filter>Engine\Graphics\VertexBuffer</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="shader.fx">
+      <Filter>Engine\Graphics\Shader</Filter>
+    </None>
   </ItemGroup>
 </Project>

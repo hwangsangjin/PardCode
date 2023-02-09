@@ -3,6 +3,7 @@
 #include "Window.h"
 
 class SwapChain;
+class VertexBuffer;
 
 class App : public Window
 {
@@ -13,5 +14,6 @@ public:
 
 private:
 	SwapChain* m_swap_chain = nullptr;
+	VertexBuffer* m_vertex_buffer = nullptr;
 };
 

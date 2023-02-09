@@ -1,5 +1,5 @@
-#include "Window.h"
 #include <cassert>
+#include "Window.h"
 
 LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam)
 {
@@ -48,7 +48,7 @@ bool Window::Initialize()
     assert(::RegisterClassEx(&wc));
 
     // 윈도우 생성
-    m_hwnd = ::CreateWindowEx(WS_EX_OVERLAPPEDWINDOW, L"Tutorial", L"Tutorial", WS_OVERLAPPEDWINDOW, CW_USEDEFAULT, CW_USEDEFAULT, 1024, 768, NULL, NULL, NULL, this);
+    m_hwnd = ::CreateWindowEx(WS_EX_OVERLAPPEDWINDOW, L"Tutorial", L"Tutorial", WS_CAPTION | WS_SYSMENU, CW_USEDEFAULT, CW_USEDEFAULT, 1024, 768, NULL, NULL, NULL, this);
     assert(m_hwnd);
 
     // 윈도우 창 보이기
@@ -58,10 +58,15 @@ bool Window::Initialize()
     // 윈도우 실행 플래그를 true로 설정
     m_is_running = true;
 
-    return true;
+    return IsRunning();
 }
 
-bool Window::Broadcast()
+bool Window::IsRunning()
+{
+    return m_is_running;
+}
+
+void Window::Broadcast()
 {
     OnUpdate();
 
@@ -73,19 +78,11 @@ bool Window::Broadcast()
     }
 
     ::Sleep(1);
-
-    return true;
 }
 
-bool Window::IsRunning()
-{
-    return m_is_running;
-}
-
-bool Window::Release()
+void Window::Release()
 {
     assert(::DestroyWindow(m_hwnd));
-    return true;
 }
 
 RECT Window::GetClientWindowRect() const

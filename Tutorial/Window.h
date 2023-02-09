@@ -6,9 +6,9 @@ class Window
 {
 public:
 	bool Initialize();
-	bool Broadcast();
 	bool IsRunning();
-	bool Release();
+	void Broadcast();
+	void Release();
 
 	RECT GetClientWindowRect() const;
 	void SetWindowHandle(HWND hwnd);

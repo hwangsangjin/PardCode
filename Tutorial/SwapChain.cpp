@@ -2,7 +2,7 @@
 #include "Graphics.h"
 #include <cassert>
 
-bool SwapChain::Initialize(HWND hwnd, UINT width, UINT height)
+void SwapChain::Initialize(HWND hwnd, UINT width, UINT height)
 {
     // 스왑 체인 구조체
     DXGI_SWAP_CHAIN_DESC desc;
@@ -33,23 +33,17 @@ bool SwapChain::Initialize(HWND hwnd, UINT width, UINT height)
     assert(m_render_target_view);
 
     buffer->Release();
-
-    return true;
 }
 
-bool SwapChain::Present(bool vsync)
+void SwapChain::Present(bool vsync)
 {
     m_dxgi_swap_chain->Present(vsync, NULL);
-
-    return true;
 }
 
-bool SwapChain::Release()
+void SwapChain::Release()
 {
     m_dxgi_swap_chain->Release();
     delete this;
-
-    return true;
 }
 
 ID3D11RenderTargetView* SwapChain::GetRenderTargetView() const
