@@ -5,7 +5,7 @@
 class VertexBuffer
 {
 public:
-	void Load(void* vertices, UINT vertex_size, UINT list_size, void* shader_byte_code, UINT shader_byte_size);
+	void Load(void* vertices, UINT vertex_size, UINT list_size, void* shader_byte_code, size_t shader_byte_size);
 	void Release();
 
 	ID3D11Buffer* GetBuffer() const;

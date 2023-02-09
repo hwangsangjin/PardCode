@@ -61,7 +61,7 @@ bool Window::Initialize()
     return IsRunning();
 }
 
-bool Window::IsRunning()
+bool Window::IsRunning() const
 {
     return m_is_running;
 }

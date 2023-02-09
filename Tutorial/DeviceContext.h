@@ -1,9 +1,8 @@
 #pragma once
 
-#include <d3d11.h>
-
 class SwapChain;
 class VertexBuffer;
+class VertexShader;
 
 class DeviceContext
 {
@@ -14,7 +13,8 @@ public:
 	void SetVertexBuffer(VertexBuffer* vertex_buffer);
 	void DrawTriangleList(UINT vertex_count, UINT start_vertex_index);
 	void DrawTriangleStrip(UINT vertex_count, UINT start_vertex_index);
-	void SetViewportSize(UINT width, UINT height);
+	void SetViewportSize(float width, float height);
+	void SetVertexShader(VertexShader* vertex_shader);
 	void Release();
 
 private:

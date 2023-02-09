@@ -4,6 +4,7 @@
 #include "SwapChain.h"
 #include "DeviceContext.h"
 #include "VertexBuffer.h"
+#include "VertexShader.h"
 
 void Graphics::Initialize()
 {
@@ -45,15 +46,8 @@ void Graphics::Initialize()
 
 void Graphics::Release()
 {
-    if (m_vertex_shader)
-        m_vertex_shader->Release();
-    if (m_pixel_shader)
-        m_pixel_shader->Release();
-    if (m_vertex_shader_blob)
-        m_pixel_shader_blob->Release();
-    if (m_pixel_shader_blob)
-        m_pixel_shader_blob->Release();
-
+    m_pixel_shader->Release();
+    m_pixel_shader_blob->Release();
     m_dxgi_factory->Release();
     m_dxgi_adapter->Release();
     m_dxgi_device->Release();
@@ -93,25 +87,38 @@ VertexBuffer* Graphics::CreateVertexBuffer()
     return new VertexBuffer();
 }
 
+VertexShader* Graphics::CreateVertexShader(const void* shader_byte_code, size_t byte_code_size)
+{
+    VertexShader* vertex_shader = new VertexShader();
+    vertex_shader->Initialize(shader_byte_code, byte_code_size);
+    assert(vertex_shader);
+    return vertex_shader;
+}
+
+void Graphics::CompileVertexShader(const wchar_t* file_name, const char* entry_point_name, void** shader_byte_code, size_t* byte_code_size)
+{
+    ID3DBlob* error_blob = nullptr;
+    ::D3DCompileFromFile(file_name, nullptr, nullptr, entry_point_name, "vs_5_0", 0, 0, &m_blob, &error_blob);
+    assert(m_blob);
+
+    *shader_byte_code = m_blob->GetBufferPointer();
+    *byte_code_size = m_blob->GetBufferSize();
+}
+
+void Graphics::ReleaseCompiledShader()
+{
+    m_blob->Release();
+}
+
 void Graphics::CreateShaders()
 {
     ID3DBlob* error_blob = nullptr;
-    D3DCompileFromFile(L"Shader.fx", nullptr, nullptr, "vsmain", "vs_5_0", NULL, NULL, &m_vertex_shader_blob, &error_blob);
-    D3DCompileFromFile(L"Shader.fx", nullptr, nullptr, "psmain", "ps_5_0", NULL, NULL, &m_pixel_shader_blob, &error_blob);
-    m_d3d_device->CreateVertexShader(m_vertex_shader_blob->GetBufferPointer(), m_vertex_shader_blob->GetBufferSize(), nullptr, &m_vertex_shader);
-    assert(m_vertex_shader);
+    ::D3DCompileFromFile(L"Shader.fx", nullptr, nullptr, "psmain", "ps_5_0", NULL, NULL, &m_pixel_shader_blob, &error_blob);
     m_d3d_device->CreatePixelShader(m_pixel_shader_blob->GetBufferPointer(), m_pixel_shader_blob->GetBufferSize(), nullptr, &m_pixel_shader);
     assert(m_pixel_shader);
 }
 
 void Graphics::SetShaders()
 {
-    m_immediate_context->VSSetShader(m_vertex_shader, nullptr, 0);
     m_immediate_context->PSSetShader(m_pixel_shader, nullptr, 0);
-}
-
-void Graphics::GetShaderBufferAndSize(void** shader_code_byte, UINT* size)
-{
-    *shader_code_byte = m_vertex_shader_blob->GetBufferPointer();
-    *size = (UINT)m_vertex_shader_blob->GetBufferSize();
 }

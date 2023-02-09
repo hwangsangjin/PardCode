@@ -2,7 +2,7 @@
 #include "VertexBuffer.h"
 #include "Graphics.h"
 
-void VertexBuffer::Load(void* vertices, UINT vertex_size, UINT list_size, void* shader_byte_code, UINT shader_byte_size)
+void VertexBuffer::Load(void* vertices, UINT vertex_size, UINT list_size, void* shader_byte_code, size_t shader_byte_size)
 {
     if (m_buffer)
         m_buffer->Release();

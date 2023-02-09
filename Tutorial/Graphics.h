@@ -5,6 +5,7 @@
 class SwapChain;
 class DeviceContext;
 class VertexBuffer;
+class VertexShader;
 
 class Graphics
 {
@@ -18,9 +19,11 @@ public:
 	DeviceContext* GetDeviceContext() const;
 	SwapChain* CreateSwapChain();
 	VertexBuffer* CreateVertexBuffer();
+	VertexShader* CreateVertexShader(const void* shader_byte_code, size_t byte_code_size);
+	void CompileVertexShader(const wchar_t* file_name, const char* entry_point_name, void** shader_byte_code, size_t* byte_code_size);
+	void ReleaseCompiledShader();
 	void CreateShaders();
 	void SetShaders();
-	void GetShaderBufferAndSize(void** shader_code_byte, UINT* size);
 
 private:
 	ID3D11Device* m_d3d_device = nullptr;
@@ -30,6 +33,7 @@ private:
 	IDXGIDevice* m_dxgi_device = nullptr;
 	IDXGIAdapter* m_dxgi_adapter = nullptr;
 	IDXGIFactory* m_dxgi_factory = nullptr;
+	ID3DBlob* m_blob = nullptr;
 	ID3DBlob* m_vertex_shader_blob = nullptr;
 	ID3DBlob* m_pixel_shader_blob = nullptr;
 	ID3D11VertexShader* m_vertex_shader = nullptr;

@@ -25,6 +25,9 @@
     <Filter Include="Engine\Graphics\SwapChain">
       <UniqueIdentifier>{13e9d9b5-62b5-411a-b592-39082fed41d1}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Engine\Graphics\VertexShader">
+      <UniqueIdentifier>{91ace5bb-3494-4961-a8c3-0222b4703f20}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -48,6 +51,9 @@
     <ClCompile Include="VertexBuffer.cpp">
       <Filter>Engine\Graphics\VertexBuffer</Filter>
     </ClCompile>
+    <ClCompile Include="VertexShader.cpp">
+      <Filter>Engine\Graphics\VertexShader</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="App.h">
@@ -68,10 +74,18 @@
     <ClInclude Include="VertexBuffer.h">
       <Filter>Engine\Graphics\VertexBuffer</Filter>
     </ClInclude>
+    <ClInclude Include="VertexShader.h">
+      <Filter>Engine\Graphics\VertexShader</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="shader.fx">
       <Filter>Engine\Graphics\Shader</Filter>
     </None>
+  </ItemGroup>
+  <ItemGroup>
+    <FxCompile Include="VertexShader.hlsl">
+      <Filter>Engine\Graphics\VertexShader</Filter>
+    </FxCompile>
   </ItemGroup>
 </Project>

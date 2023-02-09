@@ -1,6 +1,6 @@
+#include <cassert>
 #include "SwapChain.h"
 #include "Graphics.h"
-#include <cassert>
 
 void SwapChain::Initialize(HWND hwnd, UINT width, UINT height)
 {

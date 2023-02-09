@@ -6,7 +6,7 @@ class Window
 {
 public:
 	bool Initialize();
-	bool IsRunning();
+	bool IsRunning() const;
 	void Broadcast();
 	void Release();
 
@@ -19,6 +19,6 @@ public:
 
 protected:
 	HWND m_hwnd = nullptr;
-	bool m_is_running;
+	bool m_is_running = false;
 };
 
