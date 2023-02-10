@@ -6,6 +6,7 @@ class SwapChain;
 class VertexBuffer;
 class VertexShader;
 class PixelShader;
+class ConstantBuffer;
 
 class App : public Window
 {
@@ -19,5 +20,6 @@ private:
 	VertexBuffer* m_vertex_buffer = nullptr;
 	VertexShader* m_vertex_shader = nullptr;
 	PixelShader* m_pixel_shader = nullptr;
+	ConstantBuffer* m_constant_buffer = nullptr;
 };
 

@@ -32,7 +32,9 @@ void VertexBuffer::Load(void* vertices, UINT vertex_size, UINT list_size, void* 
     D3D11_INPUT_ELEMENT_DESC layout[] =
     {
         {"POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA, 0},
-        {"COLOR", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 12, D3D11_INPUT_PER_VERTEX_DATA, 0}
+        {"POSITION", 1, DXGI_FORMAT_R32G32B32_FLOAT, 0, 12, D3D11_INPUT_PER_VERTEX_DATA, 0},
+        {"COLOR", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 24, D3D11_INPUT_PER_VERTEX_DATA, 0},
+        {"COLOR", 1, DXGI_FORMAT_R32G32B32_FLOAT, 0, 36, D3D11_INPUT_PER_VERTEX_DATA, 0}
     };
     UINT layout_size = ARRAYSIZE(layout);
 
@@ -43,7 +45,9 @@ void VertexBuffer::Load(void* vertices, UINT vertex_size, UINT list_size, void* 
 
 void VertexBuffer::Release()
 {
+    assert(m_input_layout);
     m_input_layout->Release();
+    assert(m_buffer);
     m_buffer->Release();
     delete this;
 }

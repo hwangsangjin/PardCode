@@ -10,6 +10,7 @@ void PixelShader::Initialize(const void* shader_byte_code, size_t byte_code_size
 
 void PixelShader::Release()
 {
+    assert(m_pixel_shader);
     m_pixel_shader->Release();
     delete this;
 }

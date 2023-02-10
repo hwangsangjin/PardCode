@@ -7,6 +7,7 @@ class DeviceContext;
 class VertexBuffer;
 class VertexShader;
 class PixelShader;
+class ConstantBuffer;
 
 class Graphics
 {
@@ -22,13 +23,14 @@ public:
 	VertexBuffer* CreateVertexBuffer();
 	VertexShader* CreateVertexShader(const void* shader_byte_code, size_t byte_code_size);
 	PixelShader* CreatePixelShader(const void* shader_byte_code, size_t byte_code_size);
+	ConstantBuffer* CreateConstantBuffer();
 	void CompileVertexShader(const wchar_t* file_name, const char* entry_point_name, void** shader_byte_code, size_t* byte_code_size);
 	void CompilePixelShader(const wchar_t* file_name, const char* entry_point_name, void** shader_byte_code, size_t* byte_code_size);
 	void ReleaseCompiledShader();
 
 private:
+	D3D_FEATURE_LEVEL m_feature_level = D3D_FEATURE_LEVEL_11_0;
 	ID3D11Device* m_d3d_device = nullptr;
-	D3D_FEATURE_LEVEL m_feature_level;
 	DeviceContext* m_device_context = nullptr;
 	ID3D11DeviceContext* m_immediate_context = nullptr;
 	IDXGIDevice* m_dxgi_device = nullptr;

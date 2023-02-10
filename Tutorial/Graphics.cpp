@@ -3,6 +3,7 @@
 #include "Graphics.h"
 #include "SwapChain.h"
 #include "DeviceContext.h"
+#include "ConstantBuffer.h"
 #include "VertexBuffer.h"
 #include "VertexShader.h"
 #include "PixelShader.h"
@@ -43,15 +44,22 @@ void Graphics::Initialize()
     m_dxgi_adapter->GetParent(__uuidof(IDXGIFactory), (void**)&m_dxgi_factory);
 
     m_device_context = new DeviceContext(m_immediate_context);
+    assert(m_device_context);
 }
 
 void Graphics::Release()
 {
+    assert(m_dxgi_factory);
     m_dxgi_factory->Release();
+    assert(m_dxgi_adapter);
     m_dxgi_adapter->Release();
+    assert(m_dxgi_device);
     m_dxgi_device->Release();
+    assert(m_immediate_context);
     m_immediate_context->Release();
+    assert(m_device_context);
     m_device_context->Release();
+    assert(m_d3d_device);
     m_d3d_device->Release();
 }
 
@@ -102,12 +110,16 @@ PixelShader* Graphics::CreatePixelShader(const void* shader_byte_code, size_t by
     return pixel_shader;
 }
 
+ConstantBuffer* Graphics::CreateConstantBuffer()
+{
+    return new ConstantBuffer();
+}
+
 void Graphics::CompileVertexShader(const wchar_t* file_name, const char* entry_point_name, void** shader_byte_code, size_t* byte_code_size)
 {
     ID3DBlob* error_blob = nullptr;
     ::D3DCompileFromFile(file_name, nullptr, nullptr, entry_point_name, "vs_5_0", 0, 0, &m_blob, &error_blob);
     assert(m_blob);
-
     *shader_byte_code = m_blob->GetBufferPointer();
     *byte_code_size = m_blob->GetBufferSize();
 }
@@ -117,12 +129,12 @@ void Graphics::CompilePixelShader(const wchar_t* file_name, const char* entry_po
     ID3DBlob* error_blob = nullptr;
     ::D3DCompileFromFile(file_name, nullptr, nullptr, entry_point_name, "ps_5_0", 0, 0, &m_blob, &error_blob);
     assert(m_blob);
-
     *shader_byte_code = m_blob->GetBufferPointer();
     *byte_code_size = m_blob->GetBufferSize();
 }
 
 void Graphics::ReleaseCompiledShader()
 {
+    assert(m_blob);
     m_blob->Release();
 }

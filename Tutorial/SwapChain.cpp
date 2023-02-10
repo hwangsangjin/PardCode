@@ -42,6 +42,7 @@ void SwapChain::Present(bool vsync)
 
 void SwapChain::Release()
 {
+    assert(m_dxgi_swap_chain);
     m_dxgi_swap_chain->Release();
     delete this;
 }

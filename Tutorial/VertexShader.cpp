@@ -10,6 +10,7 @@ void VertexShader::Initialize(const void* shader_byte_code, size_t byte_code_siz
 
 void VertexShader::Release()
 {
+	assert(m_vertex_shader);
 	m_vertex_shader->Release();
 	delete this;
 }

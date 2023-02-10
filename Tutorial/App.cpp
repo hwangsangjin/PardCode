@@ -1,4 +1,5 @@
 #include <cassert>
+#include <Windows.h>
 #include "App.h"
 #include "Graphics.h"
 #include "SwapChain.h"
@@ -6,6 +7,7 @@
 #include "VertexBuffer.h"
 #include "VertexShader.h"
 #include "PixelShader.h"
+#include "ConstantBuffer.h"
 
 struct Vec3
 {
@@ -15,7 +17,15 @@ struct Vec3
 struct Vertex
 {
 	Vec3 position;
+	Vec3 position1;
 	Vec3 color;
+	Vec3 color1;
+};
+
+__declspec(align(16))
+struct Constant
+{
+	unsigned int time;
 };
 
 void App::OnCreate()
@@ -28,13 +38,14 @@ void App::OnCreate()
 
 	RECT rect = GetClientWindowRect();
 	m_swap_chain->Initialize(m_hwnd, rect.right - rect.left, rect.bottom - rect.top);
+	assert(m_swap_chain);
 
 	Vertex vertices[] =
 	{
-		{ -0.5f, -0.5f, 0.0f, 1.0f, 0.0f, 0.0f },
-		{ -0.5f, 0.5f, 0.0f, 0.0f, 1.0f, 0.0f },
-		{ 0.5f, -0.5f, 0.0f, 0.0f, 0.0f, 1.0f },
-		{ 0.5f, 0.5f, 0.0f, 1.0f, 1.0f, 0.0f }
+		{ -0.5f, -0.5f, 0.0f, -0.32f, -0.11f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f },
+		{ -0.5f, 0.5f, 0.0f, -0.11f, 0.78f, 0.0f, 1.0f, 1.0f, 0.0f, 0.0f, 1.0f, 1.0f },
+		{ 0.5f, -0.5f, 0.0f, 0.75f, -0.73f, 0.0f, 0.0f, 0.0f, 1.0f, 1.0f, 0.0f, 0.0f },
+		{ 0.5f, 0.5f, 0.0f, 0.88f, 0.77f, 0.0f, 1.0f, 1.0f, 1.0f, 0.0f, 0.0f, 1.0f }
 	};
 	UINT vertex_size = ARRAYSIZE(vertices);
 
@@ -44,13 +55,27 @@ void App::OnCreate()
 	void* shader_byte_code = nullptr;
 	size_t shader_byte_size = 0;
 	Graphics::GetInstance()->CompileVertexShader(L"VertexShader.hlsl", "main", &shader_byte_code, &shader_byte_size);
+	assert(shader_byte_code);
+	assert(shader_byte_size);
 	m_vertex_shader = Graphics::GetInstance()->CreateVertexShader(shader_byte_code, shader_byte_size);
+	assert(m_vertex_shader);
 	m_vertex_buffer->Load(vertices, sizeof(Vertex), vertex_size, shader_byte_code, shader_byte_size);
+	assert(m_vertex_buffer);
 	Graphics::GetInstance()->ReleaseCompiledShader();
 
 	Graphics::GetInstance()->CompilePixelShader(L"PixelShader.hlsl", "main", &shader_byte_code, &shader_byte_size);
+	assert(shader_byte_code);
+	assert(shader_byte_size);
 	m_pixel_shader = Graphics::GetInstance()->CreatePixelShader(shader_byte_code, shader_byte_size);
+	assert(m_pixel_shader);
 	Graphics::GetInstance()->ReleaseCompiledShader();
+
+	Constant constant;
+	constant.time = 0;
+	m_constant_buffer = Graphics::GetInstance()->CreateConstantBuffer();
+	assert(m_constant_buffer);
+	m_constant_buffer->Load(&constant, sizeof(Constant));
+	assert(&constant);
 }
 
 void App::OnUpdate()
@@ -63,6 +88,13 @@ void App::OnUpdate()
 	// 뷰포트 설정
 	RECT rect = GetClientWindowRect();
 	Graphics::GetInstance()->GetDeviceContext()->SetViewportSize(static_cast<UINT>(rect.right - rect.left), static_cast<UINT>(rect.bottom - rect.top));
+
+	// 상수 버퍼 설정
+	Constant constant;
+	constant.time = static_cast<unsigned int>(::GetTickCount64());
+	m_constant_buffer->Update(Graphics::GetInstance()->GetDeviceContext(), &constant);
+	Graphics::GetInstance()->GetDeviceContext()->SetConstantBuffer(m_constant_buffer, m_vertex_shader);
+	Graphics::GetInstance()->GetDeviceContext()->SetConstantBuffer(m_constant_buffer, m_pixel_shader);
 
 	// 셰이더 설정
 	Graphics::GetInstance()->GetDeviceContext()->SetVertexShader(m_vertex_shader);
@@ -79,9 +111,15 @@ void App::OnUpdate()
 void App::OnDestroy()
 {
 	Window::OnDestroy();
+	
+	assert(m_pixel_shader);
 	m_pixel_shader->Release();
+	assert(m_vertex_shader);
 	m_vertex_shader->Release();
+	assert(m_vertex_buffer);
 	m_vertex_buffer->Release();
+	assert(m_swap_chain);
 	m_swap_chain->Release();
+
 	Graphics::GetInstance()->Release();
 }
