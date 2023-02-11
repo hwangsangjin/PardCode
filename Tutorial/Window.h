@@ -2,7 +2,7 @@
 
 #include <Windows.h>
 
-class Window
+class Window 
 {
 public:
 	bool Initialize();
@@ -16,6 +16,9 @@ public:
 	virtual void OnCreate();
 	virtual void OnUpdate();
 	virtual void OnDestroy();
+
+	virtual void OnKeyUp(int key);
+	virtual void OnKeyDown(int key);
 
 protected:
 	HWND m_hwnd = nullptr;

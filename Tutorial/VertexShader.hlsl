@@ -24,13 +24,13 @@ VS_OUTPUT main(VS_INPUT input)
 {
 	VS_OUTPUT output = (VS_OUTPUT)0;
 	
-	// world space
+	// World space
 	output.position = mul(input.position, world);
 	
-	// view space
+	// View space
 	output.position = mul(output.position, view);
 	
-	// projection space
+	// Projection space
 	output.position = mul(output.position, projection);
 	
 	output.color = input.color;

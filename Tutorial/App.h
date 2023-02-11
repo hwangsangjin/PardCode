@@ -16,6 +16,9 @@ public:
 	virtual void OnUpdate() override;
 	virtual void OnDestroy() override;
 
+	virtual void OnKeyUp(int key) override;
+	virtual void OnKeyDown(int key) override;
+
 	void UpdateQuadPosition();
 
 private:
@@ -31,5 +34,9 @@ private:
 	float m_delta_time = 0.0f;
 	float m_delta_position = 0.0f;
 	float m_delta_scale = 0.0f;
+	float m_delta_rotation = 0.0f;
+	float m_rotation_x = 0.0f;
+	float m_rotation_y = 0.0f;
+	float m_rotation_z = 0.0f;
 };
 

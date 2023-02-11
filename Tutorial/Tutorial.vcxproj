@@ -150,6 +150,7 @@
     <ClCompile Include="IndexBuffer.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
     </ClCompile>
+    <ClCompile Include="Input.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Matrix4x4.cpp" />
     <ClCompile Include="PixelShader.cpp" />
@@ -167,6 +168,7 @@
     <ClInclude Include="IndexBuffer.h">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
     </ClInclude>
+    <ClInclude Include="Input.h" />
     <ClInclude Include="Matrix4x4.h" />
     <ClInclude Include="PixelShader.h" />
     <ClInclude Include="SwapChain.h" />

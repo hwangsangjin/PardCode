@@ -109,3 +109,11 @@ void Window::OnDestroy()
 {
     m_is_running = false;
 }
+
+void Window::OnKeyUp(int key)
+{
+}
+
+void Window::OnKeyDown(int key)
+{
+}

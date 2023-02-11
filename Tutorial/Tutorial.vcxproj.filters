@@ -43,6 +43,9 @@
     <Filter Include="Engine\Graphics\IndexBuffer">
       <UniqueIdentifier>{ff0e4611-7af2-48e2-8c63-08afecca6c33}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Engine\Input">
+      <UniqueIdentifier>{834b1b66-672f-4bdf-b7be-7062214f5fa4}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -84,6 +87,9 @@
     <ClCompile Include="IndexBuffer.cpp">
       <Filter>Engine\Graphics\IndexBuffer</Filter>
     </ClCompile>
+    <ClCompile Include="Input.cpp">
+      <Filter>Engine\Input</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="App.h">
@@ -121,6 +127,9 @@
     </ClInclude>
     <ClInclude Include="IndexBuffer.h">
       <Filter>Engine\Graphics\IndexBuffer</Filter>
+    </ClInclude>
+    <ClInclude Include="Input.h">
+      <Filter>Engine\Input</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

@@ -2,6 +2,7 @@
 #include <cassert>
 #include <Windows.h>
 #include "App.h"
+#include "Input.h"
 #include "Vector3.h"
 #include "Matrix4x4.h"
 #include "Graphics.h"
@@ -33,6 +34,8 @@ void App::OnCreate()
 {
 	Window::OnCreate();
 
+	Input::GetInstance()->AddListener(this);
+
 	Graphics::GetInstance()->Initialize();
 	m_swap_chain = Graphics::GetInstance()->CreateSwapChain();
 	assert(m_swap_chain);
@@ -43,13 +46,13 @@ void App::OnCreate()
 
 	Vertex vertices[] =
 	{
-		// front face
+		// Front face
 		{ Vector3(-0.5f, -0.5f, -0.5f), Vector3(1.0f, 0.0f, 0.0f), Vector3(1.0f, 0.0f, 0.0f) },
 		{ Vector3(-0.5f, 0.5f, -0.5f), Vector3(1.0f, 1.0f, 0.0f), Vector3(1.0f, 1.0f, 0.0f) },
 		{ Vector3(0.5f, 0.5f, -0.5f), Vector3(1.0f, 1.0f, 0.0f), Vector3(1.0f, 1.0f, 0.0f) },
 		{ Vector3(0.5f, -0.5f, -0.5f), Vector3(1.0f, 0.0f, 0.0f), Vector3(1.0f, 0.0f, 0.0f) },
 
-		// back face
+		// Back face
 		{ Vector3(0.5f, -0.5f, 0.5f), Vector3(0.0f, 1.0f, 0.0f), Vector3(0.0f, 1.0f, 0.0f) },
 		{ Vector3(0.5f, 0.5f, 0.5f), Vector3(0.0f, 1.0f, 1.0f), Vector3(0.0f, 1.0f, 1.0f) },
 		{ Vector3(-0.5f, 0.5f, 0.5f), Vector3(0.0f, 1.0f, 1.0f), Vector3(0.0f, 1.0f, 1.0f) },
@@ -62,27 +65,27 @@ void App::OnCreate()
 
 	unsigned int indices[] =
 	{
-		// front side
-		0, 1, 2,	// first triangle
-		2, 3, 0,	// second triangle
+		// Bront side
+		0, 1, 2,	// First triangle
+		2, 3, 0,	// Second triangle
 
-		// back side
+		// Back side
 		4, 5, 6,
 		6, 7, 4,
 
-		// top side
+		// Top side
 		1, 6, 5,
 		5, 2, 1,
 
-		// bottom size
+		// Bottom size
 		7, 0, 3,
 		3, 4, 7,
 
-		// right size
+		// Right size
 		3, 2, 5,
 		5, 4, 3,
 
-		// left side
+		// Left side
 		7, 6, 1,
 		1, 0, 7
 	};
@@ -122,6 +125,8 @@ void App::OnUpdate()
 {
 	Window::OnUpdate();
 
+	Input::GetInstance()->Update();
+
 	// 렌더 타겟 지우기
 	Graphics::GetInstance()->GetDeviceContext()->ClearRenderTargetColor(m_swap_chain, 0.0f, 0.0f, 0.0f, 1.0f);
 
@@ -151,7 +156,7 @@ void App::OnUpdate()
 	// 프레임 설정
 	m_old_delta = m_new_delta;
 	m_new_delta = static_cast<float>(::GetTickCount64());
-	m_delta_time = m_old_delta ? (m_new_delta - m_old_delta) / 1000.0f : 0;
+	m_delta_time = m_old_delta ? (m_new_delta - m_old_delta) / 1000.0f : 0.0f;
 }
 
 void App::OnDestroy()
@@ -174,6 +179,31 @@ void App::OnDestroy()
 	Graphics::GetInstance()->Release();
 }
 
+void App::OnKeyUp(int key)
+{
+
+}
+
+void App::OnKeyDown(int key)
+{
+	if (key == 'W')
+	{
+		m_rotation_x += 3.14f * m_delta_time;
+	}
+	else if (key == 'S')
+	{
+		m_rotation_x -= 3.14f * m_delta_time;
+	}
+	else if (key == 'A')
+	{
+		m_rotation_y += 3.14f * m_delta_time;
+	}
+	else if (key == 'D')
+	{
+		m_rotation_y -= 3.14f * m_delta_time;
+	}
+}
+
 void App::UpdateQuadPosition()
 {
 	m_delta_position += m_delta_time / 10.0f;
@@ -193,15 +223,15 @@ void App::UpdateQuadPosition()
 	//constant.world.SetScale(Vector3::LinearInterpolation(Vector3(0.5f, 0.5f, 0.0f), Vector3(1.0f, 1.0f, 0.0f), (std::sin(m_delta_scale) + 1.0f) / 2.0f));
 
 	temp.SetIdentity();
-	temp.SetRotationX(m_delta_scale);
+	temp.SetRotationX(m_rotation_x);
 	constant.world *= temp;
 
 	temp.SetIdentity();
-	temp.SetRotationY(m_delta_scale);
+	temp.SetRotationY(m_rotation_y);
 	constant.world *= temp;
 
 	temp.SetIdentity();
-	temp.SetRotationZ(m_delta_scale);
+	temp.SetRotationZ(m_rotation_z);
 	constant.world *= temp;
 
 	constant.view.SetIdentity();
