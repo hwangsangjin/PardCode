@@ -8,23 +8,24 @@
 #include "VertexShader.h"
 #include "PixelShader.h"
 #include "ConstantBuffer.h"
-
-struct Vec3
-{
-	float x, y, z;
-};
+#include "Vector3.h"
+#include "Matrix4x4.h"
+#include <cmath>
 
 struct Vertex
 {
-	Vec3 position;
-	Vec3 position1;
-	Vec3 color;
-	Vec3 color1;
+	Vector3 position;
+	Vector3 position1;
+	Vector3 color;
+	Vector3 color1;
 };
 
 __declspec(align(16))
 struct Constant
 {
+	Matrix4x4 world;
+	Matrix4x4 view;
+	Matrix4x4 projection;
 	unsigned int time;
 };
 
@@ -42,10 +43,10 @@ void App::OnCreate()
 
 	Vertex vertices[] =
 	{
-		{ -0.5f, -0.5f, 0.0f, -0.32f, -0.11f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f },
-		{ -0.5f, 0.5f, 0.0f, -0.11f, 0.78f, 0.0f, 1.0f, 1.0f, 0.0f, 0.0f, 1.0f, 1.0f },
-		{ 0.5f, -0.5f, 0.0f, 0.75f, -0.73f, 0.0f, 0.0f, 0.0f, 1.0f, 1.0f, 0.0f, 0.0f },
-		{ 0.5f, 0.5f, 0.0f, 0.88f, 0.77f, 0.0f, 1.0f, 1.0f, 1.0f, 0.0f, 0.0f, 1.0f }
+		{ Vector3(-0.5f, -0.5f, 0.0f), Vector3(-0.32f, -0.11f, 0.0f), Vector3(0.0f, 0.0f, 0.0f), Vector3(0.0f, 1.0f, 0.0f) },
+		{ Vector3(-0.5f, 0.5f, 0.0f), Vector3(-0.11f, 0.78f, 0.0f), Vector3(1.0f, 1.0f, 0.0f), Vector3(0.0f, 1.0f, 1.0f) },
+		{ Vector3(0.5f, -0.5f, 0.0f), Vector3(0.75f, -0.73f, 0.0f), Vector3(0.0f, 0.0f, 1.0f), Vector3(1.0f, 0.0f, 0.0f) },
+		{ Vector3(0.5f, 0.5f, 0.0f), Vector3(0.88f, 0.77f, 0.0f), Vector3(1.0f, 1.0f, 1.0f), Vector3(0.0f, 0.0f, 1.0f) }
 	};
 	UINT vertex_size = ARRAYSIZE(vertices);
 
@@ -90,9 +91,7 @@ void App::OnUpdate()
 	Graphics::GetInstance()->GetDeviceContext()->SetViewportSize(static_cast<UINT>(rect.right - rect.left), static_cast<UINT>(rect.bottom - rect.top));
 
 	// 상수 버퍼 설정
-	Constant constant;
-	constant.time = static_cast<unsigned int>(::GetTickCount64());
-	m_constant_buffer->Update(Graphics::GetInstance()->GetDeviceContext(), &constant);
+	UpdateQuadPosition();
 	Graphics::GetInstance()->GetDeviceContext()->SetConstantBuffer(m_constant_buffer, m_vertex_shader);
 	Graphics::GetInstance()->GetDeviceContext()->SetConstantBuffer(m_constant_buffer, m_pixel_shader);
 
@@ -106,6 +105,11 @@ void App::OnUpdate()
 	// 삼각형 그리기
 	Graphics::GetInstance()->GetDeviceContext()->DrawTriangleStrip(m_vertex_buffer->GetVertexSize(), 0);
 	m_swap_chain->Present(false);
+
+	// 프레임 설정
+	m_old_delta = m_new_delta;
+	m_new_delta = static_cast<float>(::GetTickCount64());
+	m_delta_time = m_old_delta ? (m_new_delta - m_old_delta) / 1000.0f : 0;
 }
 
 void App::OnDestroy()
@@ -122,4 +126,30 @@ void App::OnDestroy()
 	m_swap_chain->Release();
 
 	Graphics::GetInstance()->Release();
+}
+
+void App::UpdateQuadPosition()
+{
+	m_delta_position += m_delta_time / 10.0f;
+	if (m_delta_position >= 1.0f)
+		m_delta_position = 0.0f;
+
+	m_delta_scale += m_delta_time / 1.0f;
+
+	Constant constant;
+	constant.time = static_cast<unsigned int>(::GetTickCount64());
+	constant.world.SetTranslation(Vector3::LinearInterpolation(Vector3(-2.0f, -2.0f, 0.0f), Vector3(2.0f, 2.0f, 0.0f), m_delta_position));
+	Matrix4x4 temp;
+	temp.SetTranslation(Vector3::LinearInterpolation(Vector3(-1.5f, -1.5f, 0.0f), Vector3(1.5f, 1.5f, 0.0f), m_delta_position));
+	constant.world.SetScale(Vector3::LinearInterpolation(Vector3(0.5f, 0.5f, 0.0f), Vector3(1.0f, 1.0f, 0.0f), (std::sin(m_delta_scale) + 1.0f) / 2.0f));
+	constant.world *= temp;
+	constant.view.SetIdentity();
+	constant.projection.SetOrthographicProjection
+	(
+		(GetClientWindowRect().right - GetClientWindowRect().left) / 400.0f,
+		(GetClientWindowRect().bottom - GetClientWindowRect().top) / 400.0f,
+		-4.0f,
+		4.0f
+	);
+	m_constant_buffer->Update(Graphics::GetInstance()->GetDeviceContext(), &constant);
 }

@@ -31,6 +31,15 @@
     <Filter Include="Engine\Graphics\ConstantBuffer">
       <UniqueIdentifier>{ba57f21a-7764-40c3-aaf7-c46e2940f717}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Engine\Math">
+      <UniqueIdentifier>{7c0579a0-5a85-44f0-990b-eebb377eb5e7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Engine\Math\Matrix">
+      <UniqueIdentifier>{0b874424-c602-425d-89ac-e7300d62420a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Engine\Math\Vector">
+      <UniqueIdentifier>{60068eda-8475-437f-962e-5dd52e797f9a}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -63,6 +72,12 @@
     <ClCompile Include="ConstantBuffer.cpp">
       <Filter>Engine\Graphics\ConstantBuffer</Filter>
     </ClCompile>
+    <ClCompile Include="Vector3.cpp">
+      <Filter>Engine\Math\Vector</Filter>
+    </ClCompile>
+    <ClCompile Include="Matrix4x4.cpp">
+      <Filter>Engine\Math\Matrix</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="App.h">
@@ -91,6 +106,12 @@
     </ClInclude>
     <ClInclude Include="ConstantBuffer.h">
       <Filter>Engine\Graphics\ConstantBuffer</Filter>
+    </ClInclude>
+    <ClInclude Include="Vector3.h">
+      <Filter>Engine\Math\Vector</Filter>
+    </ClInclude>
+    <ClInclude Include="Matrix4x4.h">
+      <Filter>Engine\Math\Matrix</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
