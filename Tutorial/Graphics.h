@@ -8,6 +8,7 @@ class VertexBuffer;
 class VertexShader;
 class PixelShader;
 class ConstantBuffer;
+class IndexBuffer;
 
 class Graphics
 {
@@ -24,6 +25,7 @@ public:
 	VertexShader* CreateVertexShader(const void* shader_byte_code, size_t byte_code_size);
 	PixelShader* CreatePixelShader(const void* shader_byte_code, size_t byte_code_size);
 	ConstantBuffer* CreateConstantBuffer();
+	IndexBuffer* CreateIndexBuffer();
 	void CompileVertexShader(const wchar_t* file_name, const char* entry_point_name, void** shader_byte_code, size_t* byte_code_size);
 	void CompilePixelShader(const wchar_t* file_name, const char* entry_point_name, void** shader_byte_code, size_t* byte_code_size);
 	void ReleaseCompiledShader();

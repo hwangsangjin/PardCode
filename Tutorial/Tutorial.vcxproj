@@ -147,6 +147,9 @@
     <ClCompile Include="ConstantBuffer.cpp" />
     <ClCompile Include="DeviceContext.cpp" />
     <ClCompile Include="Graphics.cpp" />
+    <ClCompile Include="IndexBuffer.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
+    </ClCompile>
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Matrix4x4.cpp" />
     <ClCompile Include="PixelShader.cpp" />
@@ -161,6 +164,9 @@
     <ClInclude Include="ConstantBuffer.h" />
     <ClInclude Include="DeviceContext.h" />
     <ClInclude Include="Graphics.h" />
+    <ClInclude Include="IndexBuffer.h">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
+    </ClInclude>
     <ClInclude Include="Matrix4x4.h" />
     <ClInclude Include="PixelShader.h" />
     <ClInclude Include="SwapChain.h" />

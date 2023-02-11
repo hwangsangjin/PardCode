@@ -2,7 +2,7 @@
 #include "VertexBuffer.h"
 #include "Graphics.h"
 
-void VertexBuffer::Load(void* vertices, UINT vertex_size, UINT list_size, void* shader_byte_code, size_t shader_byte_size)
+void VertexBuffer::Load(void* vertices, UINT vertex_size, UINT vertex_count, void* shader_byte_code, size_t shader_byte_size)
 {
     if (m_buffer)
         m_buffer->Release();
@@ -12,7 +12,7 @@ void VertexBuffer::Load(void* vertices, UINT vertex_size, UINT list_size, void* 
     // 버퍼 구조체
     D3D11_BUFFER_DESC buff_desc = {};
     buff_desc.Usage = D3D11_USAGE_DEFAULT;
-    buff_desc.ByteWidth = vertex_size * list_size;
+    buff_desc.ByteWidth = vertex_size * vertex_count;
     buff_desc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
     buff_desc.CPUAccessFlags = 0;
     buff_desc.MiscFlags = 0;
@@ -22,7 +22,7 @@ void VertexBuffer::Load(void* vertices, UINT vertex_size, UINT list_size, void* 
     init_data.pSysMem = vertices;
 
     m_vertex_size = vertex_size;
-    m_list_size = list_size;
+    m_vertex_count = vertex_count;
 
     // 버퍼 생성
     Graphics::GetInstance()->GetD3DDevice()->CreateBuffer(&buff_desc, &init_data, &m_buffer);
@@ -32,9 +32,8 @@ void VertexBuffer::Load(void* vertices, UINT vertex_size, UINT list_size, void* 
     D3D11_INPUT_ELEMENT_DESC layout[] =
     {
         {"POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA, 0},
-        {"POSITION", 1, DXGI_FORMAT_R32G32B32_FLOAT, 0, 12, D3D11_INPUT_PER_VERTEX_DATA, 0},
-        {"COLOR", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 24, D3D11_INPUT_PER_VERTEX_DATA, 0},
-        {"COLOR", 1, DXGI_FORMAT_R32G32B32_FLOAT, 0, 36, D3D11_INPUT_PER_VERTEX_DATA, 0}
+        {"COLOR", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 12, D3D11_INPUT_PER_VERTEX_DATA, 0},
+        {"COLOR", 1, DXGI_FORMAT_R32G32B32_FLOAT, 0, 24, D3D11_INPUT_PER_VERTEX_DATA, 0}
     };
     UINT layout_size = ARRAYSIZE(layout);
 

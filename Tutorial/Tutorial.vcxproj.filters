@@ -40,6 +40,9 @@
     <Filter Include="Engine\Math\Vector">
       <UniqueIdentifier>{60068eda-8475-437f-962e-5dd52e797f9a}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Engine\Graphics\IndexBuffer">
+      <UniqueIdentifier>{ff0e4611-7af2-48e2-8c63-08afecca6c33}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -78,6 +81,9 @@
     <ClCompile Include="Matrix4x4.cpp">
       <Filter>Engine\Math\Matrix</Filter>
     </ClCompile>
+    <ClCompile Include="IndexBuffer.cpp">
+      <Filter>Engine\Graphics\IndexBuffer</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="App.h">
@@ -112,6 +118,9 @@
     </ClInclude>
     <ClInclude Include="Matrix4x4.h">
       <Filter>Engine\Math\Matrix</Filter>
+    </ClInclude>
+    <ClInclude Include="IndexBuffer.h">
+      <Filter>Engine\Graphics\IndexBuffer</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

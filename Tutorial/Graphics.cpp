@@ -3,10 +3,11 @@
 #include "Graphics.h"
 #include "SwapChain.h"
 #include "DeviceContext.h"
-#include "ConstantBuffer.h"
 #include "VertexBuffer.h"
 #include "VertexShader.h"
 #include "PixelShader.h"
+#include "ConstantBuffer.h"
+#include "IndexBuffer.h"
 
 void Graphics::Initialize()
 {
@@ -113,6 +114,11 @@ PixelShader* Graphics::CreatePixelShader(const void* shader_byte_code, size_t by
 ConstantBuffer* Graphics::CreateConstantBuffer()
 {
     return new ConstantBuffer();
+}
+
+IndexBuffer* Graphics::CreateIndexBuffer()
+{
+    return new IndexBuffer();
 }
 
 void Graphics::CompileVertexShader(const wchar_t* file_name, const char* entry_point_name, void** shader_byte_code, size_t* byte_code_size)

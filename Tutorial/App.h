@@ -7,6 +7,7 @@ class VertexBuffer;
 class VertexShader;
 class PixelShader;
 class ConstantBuffer;
+class IndexBuffer;
 
 class App : public Window
 {
@@ -23,6 +24,7 @@ private:
 	VertexShader* m_vertex_shader = nullptr;
 	PixelShader* m_pixel_shader = nullptr;
 	ConstantBuffer* m_constant_buffer = nullptr;
+	IndexBuffer* m_index_buffer = nullptr;
 
 	float m_old_delta = 0.0f;
 	float m_new_delta = 0.0f;
