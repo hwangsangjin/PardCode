@@ -35,6 +35,7 @@ void App::OnCreate()
 	Window::OnCreate();
 
 	Input::GetInstance()->AddListener(this);
+	Input::GetInstance()->ShowCursor(false);
 
 	Graphics::GetInstance()->Initialize();
 	m_swap_chain = Graphics::GetInstance()->CreateSwapChain();
@@ -43,6 +44,8 @@ void App::OnCreate()
 	RECT rect = GetClientWindowRect();
 	m_swap_chain->Initialize(m_hwnd, rect.right - rect.left, rect.bottom - rect.top);
 	assert(m_swap_chain);
+
+	m_world_camera.SetTranslation(Vector3(0.0f, 0.0f, -2.0f));
 
 	Vertex vertices[] =
 	{
@@ -135,7 +138,7 @@ void App::OnUpdate()
 	Graphics::GetInstance()->GetDeviceContext()->SetViewportSize(static_cast<UINT>(rect.right - rect.left), static_cast<UINT>(rect.bottom - rect.top));
 
 	// 상수 버퍼 설정
-	UpdateQuadPosition();
+	Update();
 	Graphics::GetInstance()->GetDeviceContext()->SetConstantBuffer(m_constant_buffer, m_vertex_shader);
 	Graphics::GetInstance()->GetDeviceContext()->SetConstantBuffer(m_constant_buffer, m_pixel_shader);
 
@@ -191,32 +194,45 @@ void App::OnDestroy()
 
 void App::OnKeyUp(int key)
 {
+	m_forward = 0.0f;
+	m_rightward = 0.0f;
 }
 
 void App::OnKeyDown(int key)
 {
 	if (key == 'W')
 	{
-		m_rotation_x += 3.14f * m_delta_time;
+		//m_rotation_x += 3.14f * m_delta_time;
+		m_forward = 1.0f;
 	}
 	else if (key == 'S')
 	{
-		m_rotation_x -= 3.14f * m_delta_time;
+		//m_rotation_x -= 3.14f * m_delta_time;
+		m_forward = -1.0f;
 	}
 	else if (key == 'A')
 	{
-		m_rotation_y += 3.14f * m_delta_time;
+		//m_rotation_y += 3.14f * m_delta_time;
+		m_rightward = -1.0f;
 	}
 	else if (key == 'D')
 	{
-		m_rotation_y -= 3.14f * m_delta_time;
+		//m_rotation_y -= 3.14f * m_delta_time;
+		m_rightward = 1.0f;
 	}
 }
 
 void App::OnMouseMove(const Point& point)
 {
-	m_rotation_x -= point.GetY() * m_delta_time;
-	m_rotation_y -= point.GetX() * m_delta_time;
+	int width = GetClientWindowRect().right - GetClientWindowRect().left;
+	int height = GetClientWindowRect().bottom - GetClientWindowRect().top;
+
+	m_rotation_x += (point.GetY() - (height / 2.0f)) * m_delta_time * 0.1f;
+	m_rotation_y += (point.GetX() - (width / 2.0f)) * m_delta_time * 0.1f;
+
+	Input::GetInstance()->SetCursorPosition(Point(width / 2.0f, height / 2.0f));
+
+
 }
 
 void App::OnLeftButtonUp(const Point& point)
@@ -239,8 +255,11 @@ void App::OnRightButtonDown(const Point& point)
 	m_scale_cube = 2.0f;
 }
 
-void App::UpdateQuadPosition()
+void App::Update()
 {
+	Constant constant;
+	constant.time = static_cast<unsigned int>(::GetTickCount64());
+
 	m_delta_position += m_delta_time / 10.0f;
 	if (m_delta_position >= 1.0f)
 		m_delta_position = 0.0f;
@@ -250,13 +269,11 @@ void App::UpdateQuadPosition()
 	Matrix4x4 temp;
 	//temp.SetTranslation(Vector3::LinearInterpolation(Vector3(-1.5f, -1.5f, 0.0f), Vector3(1.5f, 1.5f, 0.0f), m_delta_position));
 
-	Constant constant;
-	constant.time = static_cast<unsigned int>(::GetTickCount64());
-	constant.world.SetScale(Vector3(m_scale_cube, m_scale_cube, m_scale_cube));
+	//constant.world.SetScale(Vector3(m_scale_cube, m_scale_cube, m_scale_cube));
 	//constant.world.SetTranslation(Vector3::LinearInterpolation(Vector3(-2.0f, -2.0f, 0.0f), Vector3(2.0f, 2.0f, 0.0f), m_delta_position));
 	//constant.world.SetScale(Vector3::LinearInterpolation(Vector3(0.5f, 0.5f, 0.0f), Vector3(1.0f, 1.0f, 0.0f), (std::sin(m_delta_scale) + 1.0f) / 2.0f));
 
-	temp.SetIdentity();
+	/*temp.SetIdentity();
 	temp.SetRotationX(m_rotation_x);
 	constant.world *= temp;
 
@@ -266,15 +283,44 @@ void App::UpdateQuadPosition()
 
 	temp.SetIdentity();
 	temp.SetRotationZ(m_rotation_z);
-	constant.world *= temp;
+	constant.world *= temp;*/
+	
+	constant.world.SetIdentity();
 
-	constant.view.SetIdentity();
-	constant.projection.SetOrthographicProjection
+	Matrix4x4 world_camera;
+	world_camera.SetIdentity();
+
+	temp.SetIdentity();
+	temp.SetRotationX(m_rotation_x);
+	world_camera *= temp;
+
+	temp.SetIdentity();
+	temp.SetRotationY(m_rotation_y);
+	world_camera *= temp;
+
+	Vector3 new_position = m_world_camera.GetTranslation() + world_camera.GetZDirection() * (m_forward * 0.3f);
+
+	new_position = new_position + world_camera.GetXDirection() * (m_rightward * 0.3f);
+
+	world_camera.SetTranslation(new_position);
+
+	m_world_camera = world_camera;
+
+	world_camera.Inverse();
+
+	constant.view = world_camera;
+	/*constant.projection.SetOrthographicProjection
 	(
 		(GetClientWindowRect().right - GetClientWindowRect().left) / 300.0f,
 		(GetClientWindowRect().bottom - GetClientWindowRect().top) / 300.0f,
 		-4.0f,
 		4.0f
-	);
+	);*/
+
+	int width = GetClientWindowRect().right - GetClientWindowRect().left;
+	int height = GetClientWindowRect().bottom - GetClientWindowRect().top;
+
+	constant.projection.SetPerspectiveProjection(1.57f, (float)(width / (float)height), 0.1f, 100.0f);
+
 	m_constant_buffer->Update(Graphics::GetInstance()->GetDeviceContext(), &constant);
 }

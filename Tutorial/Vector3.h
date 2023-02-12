@@ -13,9 +13,12 @@ public:
 	float GetY() const;
 	float GetZ() const;
 
+	Vector3 operator*(float scalar);
+	Vector3 operator+(Vector3 vector);
+
 private:
-	float m_x = 0;
-	float m_y = 0;
-	float m_z = 0;
+	float m_x = 0.0f;
+	float m_y = 0.0f;
+	float m_z = 0.0f;
 };
 

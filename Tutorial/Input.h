@@ -14,6 +14,9 @@ public:
 	void AddListener(App* listener);
 	void RemoveListener(App* listener);
 
+	void SetCursorPosition(const Point& point);
+	void ShowCursor(bool show);
+
 private:
 	std::unordered_set<App*> m_set_listeners;
 	unsigned char m_key_states[256] = {};

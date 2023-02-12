@@ -26,7 +26,7 @@ void Input::Update()
 
         while (iter != m_set_listeners.end())
         {
-            (*iter)->OnMouseMove(Point(current_mouse_position.x - m_old_mouse_position.GetX(), current_mouse_position.y - m_old_mouse_position.GetY()));
+            (*iter)->OnMouseMove(Point(current_mouse_position.x, current_mouse_position.y));
             ++iter;
         }
     }
@@ -104,4 +104,14 @@ void Input::AddListener(App* listener)
 void Input::RemoveListener(App* listener)
 {
     m_set_listeners.erase(listener);
+}
+
+void Input::SetCursorPosition(const Point& point)
+{
+    ::SetCursorPos(point.GetX(), point.GetY());
+}
+
+void Input::ShowCursor(bool show)
+{
+    ::ShowCursor(show);
 }

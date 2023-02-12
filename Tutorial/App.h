@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Window.h"
+#include "Matrix4x4.h"
 
 class SwapChain;
 class VertexBuffer;
@@ -28,7 +29,7 @@ public:
 	virtual void OnRightButtonUp(const Point& point) override;
 	virtual void OnRightButtonDown(const Point& point) override;
 
-	void UpdateQuadPosition();
+	void Update();
 
 private:
 	SwapChain* m_swap_chain = nullptr;
@@ -48,5 +49,9 @@ private:
 	float m_rotation_y = 0.0f;
 	float m_rotation_z = 0.0f;
 	float m_scale_cube = 1.0f;
+	float m_forward = 0.0f;
+	float m_rightward = 0.0f;
+
+	Matrix4x4 m_world_camera = {};
 };
 

@@ -37,3 +37,13 @@ float Vector3::GetZ() const
 {
 	return m_z;
 }
+
+Vector3 Vector3::operator*(float scalar)
+{
+	return Vector3(m_x * scalar, m_y * scalar, m_z * scalar);
+}
+
+Vector3 Vector3::operator+(Vector3 vector)
+{
+	return Vector3(m_x + vector.m_x, m_y + vector.m_y, m_z + vector.m_z);
+}

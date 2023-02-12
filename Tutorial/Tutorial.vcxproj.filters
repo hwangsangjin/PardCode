@@ -102,6 +102,9 @@
     <ClCompile Include="Point.cpp">
       <Filter>Engine\Math\Point</Filter>
     </ClCompile>
+    <ClCompile Include="Vector4.cpp">
+      <Filter>Engine\Math\Vector</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="App.h">
@@ -145,6 +148,9 @@
     </ClInclude>
     <ClInclude Include="Point.h">
       <Filter>Engine\Math\Point</Filter>
+    </ClInclude>
+    <ClInclude Include="Vector4.h">
+      <Filter>Engine\Math\Vector</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
