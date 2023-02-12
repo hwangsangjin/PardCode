@@ -14,10 +14,19 @@ class App : public Window
 public:
 	virtual void OnCreate() override;
 	virtual void OnUpdate() override;
+	virtual void OnFocus() override;
+	virtual void OnKillFocus() override;
 	virtual void OnDestroy() override;
 
 	virtual void OnKeyUp(int key) override;
 	virtual void OnKeyDown(int key) override;
+
+	virtual void OnMouseMove(const Point& point) override;
+
+	virtual void OnLeftButtonUp(const Point& point) override;
+	virtual void OnLeftButtonDown(const Point& point) override;
+	virtual void OnRightButtonUp(const Point& point) override;
+	virtual void OnRightButtonDown(const Point& point) override;
 
 	void UpdateQuadPosition();
 
@@ -38,5 +47,6 @@ private:
 	float m_rotation_x = 0.0f;
 	float m_rotation_y = 0.0f;
 	float m_rotation_z = 0.0f;
+	float m_scale_cube = 1.0f;
 };
 

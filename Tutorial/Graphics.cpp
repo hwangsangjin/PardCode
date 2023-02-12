@@ -25,7 +25,7 @@ void Graphics::Initialize()
     };
     UINT num_feature_levels = ARRAYSIZE(feature_levels);
 
-    for (UINT driver_type_index = 0; driver_type_index < num_driver_types; driver_type_index++)
+    for (UINT driver_type_index = 0; driver_type_index < num_driver_types;)
     {
         HRESULT hr = D3D11CreateDevice(NULL, driver_types[driver_type_index], NULL, NULL, feature_levels, num_feature_levels, D3D11_SDK_VERSION, &m_d3d_device, &m_feature_level, &m_immediate_context);
         if (SUCCEEDED(hr))

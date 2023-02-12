@@ -10,6 +10,28 @@ Input* Input::GetInstance()
 
 void Input::Update()
 {
+    POINT current_mouse_position = {};
+    ::GetCursorPos(&current_mouse_position);
+
+    if (m_first_time)
+    {
+        m_old_mouse_position = Point(current_mouse_position.x, current_mouse_position.y);
+        m_first_time = false;
+    }
+
+    if (current_mouse_position.x != m_old_mouse_position.GetX() || current_mouse_position.y != m_old_mouse_position.GetY())
+    {
+        // Mouse move event
+        std::unordered_set<App*>::iterator iter = m_set_listeners.begin();
+
+        while (iter != m_set_listeners.end())
+        {
+            (*iter)->OnMouseMove(Point(current_mouse_position.x - m_old_mouse_position.GetX(), current_mouse_position.y - m_old_mouse_position.GetY()));
+            ++iter;
+        }
+    }
+    m_old_mouse_position = Point(current_mouse_position.x, current_mouse_position.y);
+
     if (::GetKeyboardState(m_key_states))
     {
         for (unsigned int i = 0; i < 256; i++)
@@ -17,11 +39,28 @@ void Input::Update()
             // Key is down
             if (m_key_states[i] & 0x80)
             {
-                std::map<App*, App*>::iterator iter = m_map_listeners.begin();
+                std::unordered_set<App*>::iterator iter = m_set_listeners.begin();
 
-                while (iter != m_map_listeners.end())
+                while (iter != m_set_listeners.end())
                 {
-                    iter->second->OnKeyDown(i);
+                    if (i == VK_LBUTTON)
+                    {
+                        if (m_key_states[i] != m_old_key_states[i])
+                        {
+                            (*iter)->OnLeftButtonDown(Point(current_mouse_position.x, current_mouse_position.y));
+                        }
+                    }
+                    else if (i == VK_RBUTTON)
+                    {
+                        if (m_key_states[i] != m_old_key_states[i])
+                        {
+                            (*iter)->OnRightButtonDown(Point(current_mouse_position.x, current_mouse_position.y));
+                        }
+                    }
+                    else
+                    {
+                        (*iter)->OnKeyDown(i);
+                    }
                     ++iter;
                 }
             }
@@ -30,11 +69,22 @@ void Input::Update()
                 // 키의 현재 상태가 이전 상태와 같지 않은 경우
                 if (m_key_states[i] != m_old_key_states[i])
                 {
-                    std::map<App*, App*>::iterator iter = m_map_listeners.begin();
+                    std::unordered_set<App*>::iterator iter = m_set_listeners.begin();
 
-                    while (iter != m_map_listeners.end())
+                    while (iter != m_set_listeners.end())
                     {
-                        iter->second->OnKeyUp(i);
+                        if (i == VK_LBUTTON)
+                        {
+                            (*iter)->OnLeftButtonUp(Point(current_mouse_position.x, current_mouse_position.y));
+                        }
+                        else if (i == VK_RBUTTON)
+                        {
+                            (*iter)->OnRightButtonUp(Point(current_mouse_position.x, current_mouse_position.y));
+                        }
+                        else
+                        {
+                            (*iter)->OnKeyUp(i);
+                        }
                         ++iter;
                     }
                 }
@@ -48,15 +98,10 @@ void Input::Update()
 
 void Input::AddListener(App* listener)
 {
-    m_map_listeners.insert(std::make_pair<App*, App*>(std::forward<App*>(listener), std::forward<App*>(listener)));
+    m_set_listeners.insert(listener);
 }
 
 void Input::RemoveListener(App* listener)
 {
-    std::map<App*, App*>::iterator iter = m_map_listeners.find(listener);
-
-    if (iter != m_map_listeners.end())
-    {
-        m_map_listeners.erase(iter);
-    }
+    m_set_listeners.erase(listener);
 }

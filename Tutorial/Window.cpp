@@ -14,6 +14,20 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam)
         window->OnCreate();
         break;
     }
+    case WM_SETFOCUS:
+    {
+        // 윈도우에 포커스가 있을 때 실행되는 이벤트
+        Window* window = (Window*)GetWindowLongPtr(hwnd, GWLP_USERDATA);
+        window->OnFocus();
+        break;
+    }
+    case WM_KILLFOCUS:
+    {
+        // 윈도우에 포커스가 없을 때 실행되는 이벤트
+        Window* window = (Window*)GetWindowLongPtr(hwnd, GWLP_USERDATA);
+        window->OnKillFocus();
+        break;
+    }
     case WM_DESTROY:
     {
         // 윈도우가 소멸될 때 실행되는 이벤트
@@ -105,6 +119,14 @@ void Window::OnUpdate()
 {
 }
 
+void Window::OnFocus()
+{
+}
+
+void Window::OnKillFocus()
+{
+}
+
 void Window::OnDestroy()
 {
     m_is_running = false;
@@ -115,5 +137,25 @@ void Window::OnKeyUp(int key)
 }
 
 void Window::OnKeyDown(int key)
+{
+}
+
+void Window::OnMouseMove(const Point& point)
+{
+}
+
+void Window::OnLeftButtonUp(const Point& point)
+{
+}
+
+void Window::OnLeftButtonDown(const Point& point)
+{
+}
+
+void Window::OnRightButtonUp(const Point& point)
+{
+}
+
+void Window::OnRightButtonDown(const Point& point)
 {
 }

@@ -1,9 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
-    <Filter Include="App">
-      <UniqueIdentifier>{ac083b77-cc43-4f4c-96fa-7ecb140d84f9}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Engine">
       <UniqueIdentifier>{ccaa2681-f4ed-4ba6-8738-0c12406c6037}</UniqueIdentifier>
     </Filter>
@@ -46,13 +43,22 @@
     <Filter Include="Engine\Input">
       <UniqueIdentifier>{834b1b66-672f-4bdf-b7be-7062214f5fa4}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Client">
+      <UniqueIdentifier>{1f7b9aad-23c7-4e73-84b3-430c43e9907e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Client\App">
+      <UniqueIdentifier>{ac083b77-cc43-4f4c-96fa-7ecb140d84f9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Client\Main">
+      <UniqueIdentifier>{b8cb8596-4769-48b3-9500-459bb2d12017}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Engine\Math\Point">
+      <UniqueIdentifier>{91a00fe4-7f0a-474d-b9e7-fab4fea224c3}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="main.cpp">
-      <Filter>App</Filter>
-    </ClCompile>
     <ClCompile Include="App.cpp">
-      <Filter>App</Filter>
+      <Filter>Client\App</Filter>
     </ClCompile>
     <ClCompile Include="Graphics.cpp">
       <Filter>Engine\Graphics</Filter>
@@ -90,10 +96,16 @@
     <ClCompile Include="Input.cpp">
       <Filter>Engine\Input</Filter>
     </ClCompile>
+    <ClCompile Include="main.cpp">
+      <Filter>Client\Main</Filter>
+    </ClCompile>
+    <ClCompile Include="Point.cpp">
+      <Filter>Engine\Math\Point</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="App.h">
-      <Filter>App</Filter>
+      <Filter>Client\App</Filter>
     </ClInclude>
     <ClInclude Include="Window.h">
       <Filter>Engine\Window</Filter>
@@ -130,6 +142,9 @@
     </ClInclude>
     <ClInclude Include="Input.h">
       <Filter>Engine\Input</Filter>
+    </ClInclude>
+    <ClInclude Include="Point.h">
+      <Filter>Engine\Math\Point</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

@@ -159,10 +159,20 @@ void App::OnUpdate()
 	m_delta_time = m_old_delta ? (m_new_delta - m_old_delta) / 1000.0f : 0.0f;
 }
 
+void App::OnFocus()
+{
+	Input::GetInstance()->AddListener(this);
+}
+
+void App::OnKillFocus()
+{
+	Input::GetInstance()->RemoveListener(this);
+}
+
 void App::OnDestroy()
 {
 	Window::OnDestroy();
-	
+
 	assert(m_pixel_shader);
 	m_pixel_shader->Release();
 	assert(m_vertex_shader);
@@ -181,7 +191,6 @@ void App::OnDestroy()
 
 void App::OnKeyUp(int key)
 {
-
 }
 
 void App::OnKeyDown(int key)
@@ -204,6 +213,32 @@ void App::OnKeyDown(int key)
 	}
 }
 
+void App::OnMouseMove(const Point& point)
+{
+	m_rotation_x -= point.GetY() * m_delta_time;
+	m_rotation_y -= point.GetX() * m_delta_time;
+}
+
+void App::OnLeftButtonUp(const Point& point)
+{
+	m_scale_cube = 1.0f;
+}
+
+void App::OnLeftButtonDown(const Point& point)
+{
+	m_scale_cube = 0.5f;
+}
+
+void App::OnRightButtonUp(const Point& point)
+{
+	m_scale_cube = 1.0f;
+}
+
+void App::OnRightButtonDown(const Point& point)
+{
+	m_scale_cube = 2.0f;
+}
+
 void App::UpdateQuadPosition()
 {
 	m_delta_position += m_delta_time / 10.0f;
@@ -212,13 +247,12 @@ void App::UpdateQuadPosition()
 
 	m_delta_scale += m_delta_time / 0.55f;
 
-
 	Matrix4x4 temp;
-	temp.SetTranslation(Vector3::LinearInterpolation(Vector3(-1.5f, -1.5f, 0.0f), Vector3(1.5f, 1.5f, 0.0f), m_delta_position));
+	//temp.SetTranslation(Vector3::LinearInterpolation(Vector3(-1.5f, -1.5f, 0.0f), Vector3(1.5f, 1.5f, 0.0f), m_delta_position));
 
 	Constant constant;
 	constant.time = static_cast<unsigned int>(::GetTickCount64());
-	constant.world.SetScale(Vector3(1.0f, 1.0f, 1.0f));
+	constant.world.SetScale(Vector3(m_scale_cube, m_scale_cube, m_scale_cube));
 	//constant.world.SetTranslation(Vector3::LinearInterpolation(Vector3(-2.0f, -2.0f, 0.0f), Vector3(2.0f, 2.0f, 0.0f), m_delta_position));
 	//constant.world.SetScale(Vector3::LinearInterpolation(Vector3(0.5f, 0.5f, 0.0f), Vector3(1.0f, 1.0f, 0.0f), (std::sin(m_delta_scale) + 1.0f) / 2.0f));
 

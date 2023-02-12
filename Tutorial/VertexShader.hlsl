@@ -22,7 +22,7 @@ cbuffer CONSTANT : register(b0)
 
 VS_OUTPUT main(VS_INPUT input)
 {
-	VS_OUTPUT output = (VS_OUTPUT)0;
+	VS_OUTPUT output = (VS_OUTPUT) 0;
 	
 	// World space
 	output.position = mul(input.position, world);
