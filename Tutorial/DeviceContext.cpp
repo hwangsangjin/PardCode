@@ -1,5 +1,6 @@
 #include <cassert>
 #include <d3d11.h>
+#include "Graphics.h"
 #include "DeviceContext.h"
 #include "SwapChain.h"
 #include "VertexBuffer.h"
@@ -8,9 +9,17 @@
 #include "ConstantBuffer.h"
 #include "IndexBuffer.h"
 
-DeviceContext::DeviceContext(ID3D11DeviceContext* device_context)
+DeviceContext::DeviceContext(ID3D11DeviceContext* device_context, Graphics* graphics)
 	: m_device_context(device_context)
+	, m_graphics(graphics)
 {
+}
+
+DeviceContext::~DeviceContext()
+{
+	assert(m_device_context);
+	m_device_context->Release();
+	m_device_context = nullptr;
 }
 
 ID3D11DeviceContext* DeviceContext::GetDeviceContext()
@@ -96,11 +105,4 @@ void DeviceContext::ClearRenderTargetColor(SwapChain* swap_chain, float red, flo
 	auto render_target_views = swap_chain->GetRenderTargetView();
 	assert(render_target_views);
 	m_device_context->OMSetRenderTargets(1, &render_target_views, nullptr);
-}
-
-void DeviceContext::Release()
-{
-	assert(m_device_context);
-	m_device_context->Release();
-	delete this;
 }

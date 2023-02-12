@@ -1,12 +1,13 @@
 #pragma once
 
 #include <d3d11.h>
+#include "Prerequisites.h"
 
 class IndexBuffer
 {
 public:
-	void Load(void* indices, UINT index_count);
-	void Release();
+	IndexBuffer(void* indices, UINT index_count, Graphics* graphics);
+	~IndexBuffer();
 
 	ID3D11Buffer* GetBuffer() const;
 	UINT GetIndexCount() const;
@@ -15,5 +16,6 @@ private:
 	UINT m_index_count = 0;
 
 	ID3D11Buffer* m_buffer = nullptr;
+	Graphics* m_graphics = nullptr;
 };
 

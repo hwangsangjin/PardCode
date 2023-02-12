@@ -1,32 +1,17 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
+    <Filter Include="Client">
+      <UniqueIdentifier>{1f7b9aad-23c7-4e73-84b3-430c43e9907e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Client\App">
+      <UniqueIdentifier>{ac083b77-cc43-4f4c-96fa-7ecb140d84f9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Client\Main">
+      <UniqueIdentifier>{b8cb8596-4769-48b3-9500-459bb2d12017}</UniqueIdentifier>
+    </Filter>
     <Filter Include="Engine">
       <UniqueIdentifier>{ccaa2681-f4ed-4ba6-8738-0c12406c6037}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Engine\Window">
-      <UniqueIdentifier>{9f436a37-f5f8-4bcb-98b0-ae40bcd8b600}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Engine\Graphics">
-      <UniqueIdentifier>{8706107b-a603-48a4-aa77-2f957e2dd6f9}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Engine\Graphics\DeviceContext">
-      <UniqueIdentifier>{88ff53a5-e318-4df6-94c1-ff78c406f691}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Engine\Graphics\VertexBuffer">
-      <UniqueIdentifier>{9cf52aa4-5fad-4303-b5ac-73a948c0e99d}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Engine\Graphics\SwapChain">
-      <UniqueIdentifier>{13e9d9b5-62b5-411a-b592-39082fed41d1}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Engine\Graphics\VertexShader">
-      <UniqueIdentifier>{91ace5bb-3494-4961-a8c3-0222b4703f20}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Engine\Graphics\PixelShader">
-      <UniqueIdentifier>{11143976-dd06-49a5-9274-e0a05177a32a}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Engine\Graphics\ConstantBuffer">
-      <UniqueIdentifier>{ba57f21a-7764-40c3-aaf7-c46e2940f717}</UniqueIdentifier>
     </Filter>
     <Filter Include="Engine\Math">
       <UniqueIdentifier>{7c0579a0-5a85-44f0-990b-eebb377eb5e7}</UniqueIdentifier>
@@ -37,23 +22,38 @@
     <Filter Include="Engine\Math\Vector">
       <UniqueIdentifier>{60068eda-8475-437f-962e-5dd52e797f9a}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Engine\Math\Point">
+      <UniqueIdentifier>{91a00fe4-7f0a-474d-b9e7-fab4fea224c3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Engine\Graphics">
+      <UniqueIdentifier>{8706107b-a603-48a4-aa77-2f957e2dd6f9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Engine\Graphics\ConstantBuffer">
+      <UniqueIdentifier>{ba57f21a-7764-40c3-aaf7-c46e2940f717}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Engine\Graphics\DeviceContext">
+      <UniqueIdentifier>{88ff53a5-e318-4df6-94c1-ff78c406f691}</UniqueIdentifier>
+    </Filter>
     <Filter Include="Engine\Graphics\IndexBuffer">
       <UniqueIdentifier>{ff0e4611-7af2-48e2-8c63-08afecca6c33}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Engine\Graphics\PixelShader">
+      <UniqueIdentifier>{11143976-dd06-49a5-9274-e0a05177a32a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Engine\Graphics\SwapChain">
+      <UniqueIdentifier>{13e9d9b5-62b5-411a-b592-39082fed41d1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Engine\Graphics\VertexBuffer">
+      <UniqueIdentifier>{9cf52aa4-5fad-4303-b5ac-73a948c0e99d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Engine\Graphics\VertexShader">
+      <UniqueIdentifier>{91ace5bb-3494-4961-a8c3-0222b4703f20}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Engine\Window">
+      <UniqueIdentifier>{9f436a37-f5f8-4bcb-98b0-ae40bcd8b600}</UniqueIdentifier>
+    </Filter>
     <Filter Include="Engine\Input">
       <UniqueIdentifier>{834b1b66-672f-4bdf-b7be-7062214f5fa4}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Client">
-      <UniqueIdentifier>{1f7b9aad-23c7-4e73-84b3-430c43e9907e}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Client\App">
-      <UniqueIdentifier>{ac083b77-cc43-4f4c-96fa-7ecb140d84f9}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Client\Main">
-      <UniqueIdentifier>{b8cb8596-4769-48b3-9500-459bb2d12017}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Engine\Math\Point">
-      <UniqueIdentifier>{91a00fe4-7f0a-474d-b9e7-fab4fea224c3}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -105,6 +105,9 @@
     <ClCompile Include="Vector4.cpp">
       <Filter>Engine\Math\Vector</Filter>
     </ClCompile>
+    <ClCompile Include="Engine.cpp">
+      <Filter>Engine</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="App.h">
@@ -151,6 +154,12 @@
     </ClInclude>
     <ClInclude Include="Vector4.h">
       <Filter>Engine\Math\Vector</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine.h">
+      <Filter>Engine</Filter>
+    </ClInclude>
+    <ClInclude Include="Prerequisites.h">
+      <Filter>Engine</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

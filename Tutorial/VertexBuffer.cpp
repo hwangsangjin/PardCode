@@ -2,13 +2,9 @@
 #include "VertexBuffer.h"
 #include "Graphics.h"
 
-void VertexBuffer::Load(void* vertices, UINT vertex_size, UINT vertex_count, void* shader_byte_code, size_t shader_byte_size)
+VertexBuffer::VertexBuffer(void* vertices, UINT vertex_size, UINT vertex_count, void* shader_byte_code, size_t shader_byte_size, Graphics* graphics)
+    : m_graphics(graphics)
 {
-    if (m_buffer)
-        m_buffer->Release();
-    if (m_input_layout)
-        m_input_layout->Release();
-
     // 버퍼 구조체
     D3D11_BUFFER_DESC buff_desc = {};
     buff_desc.Usage = D3D11_USAGE_DEFAULT;
@@ -25,7 +21,7 @@ void VertexBuffer::Load(void* vertices, UINT vertex_size, UINT vertex_count, voi
     m_vertex_count = vertex_count;
 
     // 버퍼 생성
-    Graphics::GetInstance()->GetD3DDevice()->CreateBuffer(&buff_desc, &init_data, &m_buffer);
+    m_graphics->GetD3DDevice()->CreateBuffer(&buff_desc, &init_data, &m_buffer);
     assert(m_buffer);
 
     // 입력 레이아웃 구조체
@@ -38,17 +34,19 @@ void VertexBuffer::Load(void* vertices, UINT vertex_size, UINT vertex_count, voi
     UINT layout_size = ARRAYSIZE(layout);
 
     // 입력 레이아웃 생성
-    Graphics::GetInstance()->GetD3DDevice()->CreateInputLayout(layout, layout_size, shader_byte_code, shader_byte_size, &m_input_layout);
+    m_graphics->GetD3DDevice()->CreateInputLayout(layout, layout_size, shader_byte_code, shader_byte_size, &m_input_layout);
     assert(m_input_layout);
 }
 
-void VertexBuffer::Release()
+VertexBuffer::~VertexBuffer()
 {
     assert(m_input_layout);
     m_input_layout->Release();
+    m_input_layout = nullptr;
+
     assert(m_buffer);
     m_buffer->Release();
-    delete this;
+    m_buffer = nullptr;
 }
 
 ID3D11Buffer* VertexBuffer::GetBuffer() const

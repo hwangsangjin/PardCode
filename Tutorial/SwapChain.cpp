@@ -2,7 +2,8 @@
 #include "SwapChain.h"
 #include "Graphics.h"
 
-void SwapChain::Initialize(HWND hwnd, UINT width, UINT height)
+SwapChain::SwapChain(HWND hwnd, UINT width, UINT height, Graphics* graphics)
+    : m_graphics(graphics)
 {
     // 스왑 체인 구조체
     DXGI_SWAP_CHAIN_DESC desc;
@@ -20,8 +21,8 @@ void SwapChain::Initialize(HWND hwnd, UINT width, UINT height)
     desc.Windowed = TRUE;
 
     // 스왑 체인 생성
-    ID3D11Device* device = Graphics::GetInstance()->GetD3DDevice();
-    Graphics::GetInstance()->GetDXGIFactory()->CreateSwapChain(device, &desc, &m_dxgi_swap_chain);
+    ID3D11Device* device = m_graphics->GetD3DDevice();
+    m_graphics->GetDXGIFactory()->CreateSwapChain(device, &desc, &m_dxgi_swap_chain);
     assert(&m_dxgi_swap_chain);
 
     // 후면 버퍼 색상을 가져와서 렌더 타겟 뷰를 생성
@@ -35,16 +36,16 @@ void SwapChain::Initialize(HWND hwnd, UINT width, UINT height)
     buffer->Release();
 }
 
-void SwapChain::Present(bool vsync)
-{
-    m_dxgi_swap_chain->Present(vsync, NULL);
-}
-
-void SwapChain::Release()
+SwapChain::~SwapChain()
 {
     assert(m_dxgi_swap_chain);
     m_dxgi_swap_chain->Release();
-    delete this;
+    m_dxgi_swap_chain = nullptr;
+}
+
+void SwapChain::Present(bool vsync)
+{
+    m_dxgi_swap_chain->Present(vsync, NULL);
 }
 
 ID3D11RenderTargetView* SwapChain::GetRenderTargetView() const

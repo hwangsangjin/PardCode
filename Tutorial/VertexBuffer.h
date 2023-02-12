@@ -1,12 +1,13 @@
 #pragma once
 
 #include <d3d11.h>
+#include "Prerequisites.h"
 
 class VertexBuffer
 {
 public:
-	void Load(void* vertices, UINT vertex_size, UINT vertex_count, void* shader_byte_code, size_t shader_byte_size);
-	void Release();
+	VertexBuffer(void* vertices, UINT vertex_size, UINT vertex_count, void* shader_byte_code, size_t shader_byte_size, Graphics* graphics);
+	~VertexBuffer();
 
 	ID3D11Buffer* GetBuffer() const;
 	ID3D11InputLayout* GetInputLayout() const;
@@ -18,5 +19,6 @@ private:
 
 	ID3D11Buffer* m_buffer = nullptr;
 	ID3D11InputLayout* m_input_layout = nullptr;
+	Graphics* m_graphics = nullptr;
 };
 

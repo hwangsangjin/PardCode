@@ -16,19 +16,19 @@ public:
 	void Initialize();
 	void Release();
 
-	static Graphics* GetInstance();
-	ID3D11Device* GetD3DDevice() const;
-	IDXGIFactory* GetDXGIFactory() const;
-	DeviceContext* GetDeviceContext() const;
-	SwapChain* CreateSwapChain();
-	VertexBuffer* CreateVertexBuffer();
+	SwapChain* CreateSwapChain(HWND hwnd, UINT width, UINT height);
+	VertexBuffer* CreateVertexBuffer(void* vertices, UINT vertex_size, UINT vertex_count, void* shader_byte_code, size_t shader_byte_size);
 	VertexShader* CreateVertexShader(const void* shader_byte_code, size_t byte_code_size);
 	PixelShader* CreatePixelShader(const void* shader_byte_code, size_t byte_code_size);
-	ConstantBuffer* CreateConstantBuffer();
-	IndexBuffer* CreateIndexBuffer();
+	ConstantBuffer* CreateConstantBuffer(void* buffer, UINT buffer_size);
+	IndexBuffer* CreateIndexBuffer(void* indices, UINT index_count);
 	void CompileVertexShader(const wchar_t* file_name, const char* entry_point_name, void** shader_byte_code, size_t* byte_code_size);
 	void CompilePixelShader(const wchar_t* file_name, const char* entry_point_name, void** shader_byte_code, size_t* byte_code_size);
 	void ReleaseCompiledShader();
+
+	ID3D11Device* GetD3DDevice() const;
+	IDXGIFactory* GetDXGIFactory() const;
+	DeviceContext* GetDeviceContext() const;
 
 private:
 	D3D_FEATURE_LEVEL m_feature_level = D3D_FEATURE_LEVEL_11_0;

@@ -3,12 +3,9 @@
 #include "DeviceContext.h"
 #include "Graphics.h"
 
-void ConstantBuffer::Load(void* buffer, UINT buffer_size)
+ConstantBuffer::ConstantBuffer(void* buffer, UINT buffer_size, Graphics* graphics)
+    : m_graphics(graphics)
 {
-    // 버퍼가 있는 경우 버퍼 해제
-    if (m_buffer)
-        m_buffer->Release();
-
     // 버퍼 구조체
     D3D11_BUFFER_DESC buff_desc = {};
     buff_desc.Usage = D3D11_USAGE_DEFAULT;
@@ -22,20 +19,20 @@ void ConstantBuffer::Load(void* buffer, UINT buffer_size)
     init_data.pSysMem = buffer;
 
     // 버퍼 생성
-    Graphics::GetInstance()->GetD3DDevice()->CreateBuffer(&buff_desc, &init_data, &m_buffer);
+    m_graphics->GetD3DDevice()->CreateBuffer(&buff_desc, &init_data, &m_buffer);
     assert(m_buffer);
+}
+
+ConstantBuffer::~ConstantBuffer()
+{
+    assert(m_buffer);
+    m_buffer->Release();
+    m_buffer = nullptr;
 }
 
 void ConstantBuffer::Update(DeviceContext* device_context, void* buffer)
 {
     device_context->GetDeviceContext()->UpdateSubresource(m_buffer, NULL, nullptr, buffer, NULL, NULL);
-}
-
-void ConstantBuffer::Release()
-{
-    assert(m_buffer);
-    m_buffer->Release();
-    delete this;
 }
 
 ID3D11Buffer* ConstantBuffer::GetBuffer() const

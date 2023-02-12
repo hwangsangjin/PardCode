@@ -1,12 +1,11 @@
 #include <cassert>
 #include "IndexBuffer.h"
+#include "Engine.h"
 #include "Graphics.h"
 
-void IndexBuffer::Load(void* indices, UINT index_count)
+IndexBuffer::IndexBuffer(void* indices, UINT index_count, Graphics* graphics)
+    : m_graphics(graphics)
 {
-    if (m_buffer)
-        m_buffer->Release();
-
     // 버퍼 구조체
     D3D11_BUFFER_DESC buff_desc = {};
     buff_desc.Usage = D3D11_USAGE_DEFAULT;
@@ -22,15 +21,15 @@ void IndexBuffer::Load(void* indices, UINT index_count)
     m_index_count = index_count;
 
     // 버퍼 생성
-    Graphics::GetInstance()->GetD3DDevice()->CreateBuffer(&buff_desc, &init_data, &m_buffer);
+    Engine::GetInstance()->GetGraphics()->GetD3DDevice()->CreateBuffer(&buff_desc, &init_data, &m_buffer);
     assert(m_buffer);
 }
 
-void IndexBuffer::Release()
+IndexBuffer::~IndexBuffer()
 {
     assert(m_buffer);
     m_buffer->Release();
-    delete this;
+    m_buffer = nullptr;
 }
 
 ID3D11Buffer* IndexBuffer::GetBuffer() const

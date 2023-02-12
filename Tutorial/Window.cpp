@@ -45,7 +45,7 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam)
 
 bool Window::Initialize()
 {
-    // WNDCLASSEX 객체 설정
+    // 윈도우 클래스 객체 설정
     WNDCLASSEX wc;
     wc.cbClsExtra = NULL;
     wc.cbSize = sizeof(WNDCLASSEX);
@@ -59,7 +59,10 @@ bool Window::Initialize()
     wc.lpszMenuName = L"";
     wc.style = NULL;
     wc.lpfnWndProc = &WndProc;
-    assert(::RegisterClassEx(&wc));
+
+    // 클래스 등록을 실패하는 경우
+    if (!::RegisterClassEx(&wc))
+        return false;
 
     // 윈도우 생성
     m_hwnd = ::CreateWindowEx(WS_EX_OVERLAPPEDWINDOW, L"Tutorial", L"Tutorial", WS_CAPTION | WS_SYSMENU, CW_USEDEFAULT, CW_USEDEFAULT, 1024, 768, NULL, NULL, NULL, this);
@@ -69,7 +72,7 @@ bool Window::Initialize()
     ::ShowWindow(m_hwnd, SW_SHOW);
     ::UpdateWindow(m_hwnd);
 
-    // 윈도우 실행 플래그를 true로 설정
+    // 윈도우 실행 플래그 설정
     m_is_running = true;
 
     return IsRunning();
@@ -96,7 +99,8 @@ void Window::Broadcast()
 
 void Window::Release()
 {
-    assert(::DestroyWindow(m_hwnd));
+    ::DestroyWindow(m_hwnd);
+    m_hwnd = nullptr;
 }
 
 RECT Window::GetClientWindowRect() const

@@ -2,17 +2,18 @@
 #include "PixelShader.h"
 #include "Graphics.h"
 
-void PixelShader::Initialize(const void* shader_byte_code, size_t byte_code_size)
+PixelShader::PixelShader(const void* shader_byte_code, size_t byte_code_size, Graphics* graphics)
+    : m_graphics(graphics)
 {
-    Graphics::GetInstance()->GetD3DDevice()->CreatePixelShader(shader_byte_code, byte_code_size, nullptr, &m_pixel_shader);
+    m_graphics->GetD3DDevice()->CreatePixelShader(shader_byte_code, byte_code_size, nullptr, &m_pixel_shader);
     assert(m_pixel_shader);
 }
 
-void PixelShader::Release()
+PixelShader::~PixelShader()
 {
     assert(m_pixel_shader);
     m_pixel_shader->Release();
-    delete this;
+    m_pixel_shader = nullptr;
 }
 
 ID3D11PixelShader* PixelShader::GetPixelShader() const

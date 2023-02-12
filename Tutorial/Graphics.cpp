@@ -44,7 +44,7 @@ void Graphics::Initialize()
     m_dxgi_device->GetParent(__uuidof(IDXGIAdapter), (void**)&m_dxgi_adapter);
     m_dxgi_adapter->GetParent(__uuidof(IDXGIFactory), (void**)&m_dxgi_factory);
 
-    m_device_context = new DeviceContext(m_immediate_context);
+    m_device_context = new DeviceContext(m_immediate_context, this);
     assert(m_device_context);
 }
 
@@ -52,22 +52,27 @@ void Graphics::Release()
 {
     assert(m_dxgi_factory);
     m_dxgi_factory->Release();
+    m_dxgi_factory = nullptr;
+
     assert(m_dxgi_adapter);
     m_dxgi_adapter->Release();
+    m_dxgi_adapter = nullptr;
+
     assert(m_dxgi_device);
     m_dxgi_device->Release();
+    m_dxgi_device = nullptr;
+
     assert(m_immediate_context);
     m_immediate_context->Release();
+    m_immediate_context = nullptr;
+
     assert(m_device_context);
-    m_device_context->Release();
+    delete m_device_context;
+    m_device_context = nullptr;
+
     assert(m_d3d_device);
     m_d3d_device->Release();
-}
-
-Graphics* Graphics::GetInstance()
-{
-    static Graphics instance;
-    return &instance;
+    m_d3d_device = nullptr;
 }
 
 ID3D11Device* Graphics::GetD3DDevice() const
@@ -85,40 +90,38 @@ DeviceContext* Graphics::GetDeviceContext() const
     return m_device_context;
 }
 
-SwapChain* Graphics::CreateSwapChain()
+SwapChain* Graphics::CreateSwapChain(HWND hwnd, UINT width, UINT height)
 {
-    return new SwapChain();
+    return new SwapChain(hwnd, width, height, this);
 }
 
-VertexBuffer* Graphics::CreateVertexBuffer()
+VertexBuffer* Graphics::CreateVertexBuffer(void* vertices, UINT vertex_size, UINT vertex_count, void* shader_byte_code, size_t shader_byte_size)
 {
-    return new VertexBuffer();
+    return new VertexBuffer(vertices, vertex_size,  vertex_count, shader_byte_code, shader_byte_size, this);
 }
 
 VertexShader* Graphics::CreateVertexShader(const void* shader_byte_code, size_t byte_code_size)
 {
-    VertexShader* vertex_shader = new VertexShader();
-    vertex_shader->Initialize(shader_byte_code, byte_code_size);
+    VertexShader* vertex_shader = new VertexShader(shader_byte_code, byte_code_size, this);
     assert(vertex_shader);
     return vertex_shader;
 }
 
 PixelShader* Graphics::CreatePixelShader(const void* shader_byte_code, size_t byte_code_size)
 {
-    PixelShader* pixel_shader = new PixelShader();
-    pixel_shader->Initialize(shader_byte_code, byte_code_size);
+    PixelShader* pixel_shader = new PixelShader(shader_byte_code, byte_code_size, this);
     assert(pixel_shader);
     return pixel_shader;
 }
 
-ConstantBuffer* Graphics::CreateConstantBuffer()
+ConstantBuffer* Graphics::CreateConstantBuffer(void* buffer, UINT buffer_size)
 {
-    return new ConstantBuffer();
+    return new ConstantBuffer(buffer, buffer_size, this);
 }
 
-IndexBuffer* Graphics::CreateIndexBuffer()
+IndexBuffer* Graphics::CreateIndexBuffer(void* indices, UINT index_count)
 {
-    return new IndexBuffer();
+    return new IndexBuffer(indices, index_count, this);
 }
 
 void Graphics::CompileVertexShader(const wchar_t* file_name, const char* entry_point_name, void** shader_byte_code, size_t* byte_code_size)
