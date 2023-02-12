@@ -2,6 +2,7 @@
 
 #include "Window.h"
 #include "Matrix4x4.h"
+#include "Engine.h"
 
 class SwapChain;
 class VertexBuffer;
@@ -32,12 +33,12 @@ public:
 	void Update();
 
 private:
-	SwapChain* m_swap_chain = nullptr;
-	VertexBuffer* m_vertex_buffer = nullptr;
-	VertexShader* m_vertex_shader = nullptr;
-	PixelShader* m_pixel_shader = nullptr;
-	ConstantBuffer* m_constant_buffer = nullptr;
-	IndexBuffer* m_index_buffer = nullptr;
+	SwapChainPtr m_swap_chain = nullptr;
+	VertexBufferPtr m_vertex_buffer = nullptr;
+	VertexShaderPtr m_vertex_shader = nullptr;
+	PixelShaderPtr m_pixel_shader = nullptr;
+	ConstantBufferPtr m_constant_buffer = nullptr;
+	IndexBufferPtr m_index_buffer = nullptr;
 
 	float m_old_delta = 0.0f;
 	float m_new_delta = 0.0f;

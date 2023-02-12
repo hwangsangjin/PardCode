@@ -7,13 +7,12 @@ class Point;
 class Window
 {
 public:
-	bool Initialize();
-	bool IsRunning() const;
-	void Broadcast();
-	void Release();
+	Window();
+	~Window();
+
+	bool IsRunning();
 
 	RECT GetClientWindowRect() const;
-	void SetWindowHandle(HWND hwnd);
 
 	virtual void OnCreate();
 	virtual void OnUpdate();
@@ -34,5 +33,9 @@ public:
 protected:
 	HWND m_hwnd = nullptr;
 	bool m_is_running = false;
+	bool m_is_initialize = false;
+
+private:
+	bool Broadcast();
 };
 

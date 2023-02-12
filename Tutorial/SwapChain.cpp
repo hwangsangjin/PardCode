@@ -1,4 +1,5 @@
 #include <cassert>
+#include <exception>
 #include "SwapChain.h"
 #include "Graphics.h"
 
@@ -22,25 +23,38 @@ SwapChain::SwapChain(HWND hwnd, UINT width, UINT height, Graphics* graphics)
 
     // 스왑 체인 생성
     ID3D11Device* device = m_graphics->GetD3DDevice();
-    m_graphics->GetDXGIFactory()->CreateSwapChain(device, &desc, &m_dxgi_swap_chain);
-    assert(&m_dxgi_swap_chain);
+    HRESULT hr = m_graphics->GetDXGIFactory()->CreateSwapChain(device, &desc, &m_dxgi_swap_chain);
+    if (FAILED(hr))
+    {
+        throw std::exception("SwapChain not created successfully");
+        assert(&m_dxgi_swap_chain);
+    }
 
     // 후면 버퍼 색상을 가져와서 렌더 타겟 뷰를 생성
-    ID3D11Texture2D* buffer = nullptr;
-    m_dxgi_swap_chain->GetBuffer(0, __uuidof(ID3D11Texture2D), (void**)&buffer);
-    assert(buffer);
+    ID3D11Texture2D* buffer = NULL;
+    hr = m_dxgi_swap_chain->GetBuffer(0, __uuidof(ID3D11Texture2D), (void**)&buffer);
+    if (FAILED(hr))
+    {
+        throw std::exception("SwapChain get buffer not successfully");
+        assert(buffer);
+    }
 
-    device->CreateRenderTargetView(buffer, nullptr, &m_render_target_view);
-    assert(m_render_target_view);
-
+    hr = device->CreateRenderTargetView(buffer, nullptr, &m_render_target_view);
     buffer->Release();
+    if (FAILED(hr))
+    {
+        throw std::exception("RenderTargetView not created successfully");
+        assert(m_render_target_view);
+    }
 }
 
 SwapChain::~SwapChain()
 {
-    assert(m_dxgi_swap_chain);
-    m_dxgi_swap_chain->Release();
-    m_dxgi_swap_chain = nullptr;
+    if (m_dxgi_swap_chain)
+    {
+        m_dxgi_swap_chain->Release();
+        m_dxgi_swap_chain = nullptr;
+    }
 }
 
 void SwapChain::Present(bool vsync)

@@ -1,4 +1,5 @@
 #include <cassert>
+#include <exception>
 #include "IndexBuffer.h"
 #include "Engine.h"
 #include "Graphics.h"
@@ -21,15 +22,20 @@ IndexBuffer::IndexBuffer(void* indices, UINT index_count, Graphics* graphics)
     m_index_count = index_count;
 
     // 버퍼 생성
-    Engine::GetInstance()->GetGraphics()->GetD3DDevice()->CreateBuffer(&buff_desc, &init_data, &m_buffer);
-    assert(m_buffer);
+    if (FAILED(Engine::GetInstance()->GetGraphics()->GetD3DDevice()->CreateBuffer(&buff_desc, &init_data, &m_buffer)))
+    {
+        throw std::exception("IndexBuffer not created successfully");
+        assert(m_buffer);
+    }
 }
 
 IndexBuffer::~IndexBuffer()
 {
-    assert(m_buffer);
-    m_buffer->Release();
-    m_buffer = nullptr;
+    if (m_buffer)
+    {
+        m_buffer->Release();
+        m_buffer = nullptr;
+    }
 }
 
 ID3D11Buffer* IndexBuffer::GetBuffer() const

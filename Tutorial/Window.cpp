@@ -1,4 +1,5 @@
 #include <cassert>
+#include <exception>
 #include "Window.h"
 
 LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam)
@@ -8,17 +9,14 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam)
     case WM_CREATE:
     {
         // 윈도우가 생성될 때 실행되는 이벤트
-        Window* window = (Window*)((LPCREATESTRUCT)lparam)->lpCreateParams;
-        SetWindowLongPtr(hwnd, GWLP_USERDATA, (LONG_PTR)window);
-        window->SetWindowHandle(hwnd);
-        window->OnCreate();
         break;
     }
     case WM_SETFOCUS:
     {
         // 윈도우에 포커스가 있을 때 실행되는 이벤트
         Window* window = (Window*)GetWindowLongPtr(hwnd, GWLP_USERDATA);
-        window->OnFocus();
+        if (window)
+            window->OnFocus();
         break;
     }
     case WM_KILLFOCUS:
@@ -43,7 +41,7 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam)
     return NULL;
 }
 
-bool Window::Initialize()
+Window::Window()
 {
     // 윈도우 클래스 객체 설정
     WNDCLASSEX wc;
@@ -60,13 +58,16 @@ bool Window::Initialize()
     wc.style = NULL;
     wc.lpfnWndProc = &WndProc;
 
-    // 클래스 등록을 실패하는 경우
+    // 클래스 등록을 실패한 경우
     if (!::RegisterClassEx(&wc))
-        return false;
+        throw std::exception("Window class not registered successfully");
 
     // 윈도우 생성
-    m_hwnd = ::CreateWindowEx(WS_EX_OVERLAPPEDWINDOW, L"Tutorial", L"Tutorial", WS_CAPTION | WS_SYSMENU, CW_USEDEFAULT, CW_USEDEFAULT, 1024, 768, NULL, NULL, NULL, this);
-    assert(m_hwnd);
+    m_hwnd = ::CreateWindowEx(WS_EX_OVERLAPPEDWINDOW, L"Tutorial", L"Tutorial", WS_CAPTION | WS_SYSMENU, CW_USEDEFAULT, CW_USEDEFAULT, 1024, 768, NULL, NULL, NULL, NULL);
+
+    // 윈도우 생성을 실패한 경우
+    if (!m_hwnd)
+        throw std::exception("Window not created successfully");
 
     // 윈도우 창 보이기
     ::ShowWindow(m_hwnd, SW_SHOW);
@@ -74,20 +75,34 @@ bool Window::Initialize()
 
     // 윈도우 실행 플래그 설정
     m_is_running = true;
-
-    return IsRunning();
 }
 
-bool Window::IsRunning() const
+Window::~Window()
 {
+    ::DestroyWindow(m_hwnd);
+    m_hwnd = nullptr;
+}
+
+bool Window::IsRunning()
+{
+    if (m_is_running)
+        Broadcast();
+
     return m_is_running;
 }
 
-void Window::Broadcast()
+bool Window::Broadcast()
 {
+    if (!m_is_initialize)
+    {
+        SetWindowLongPtr(m_hwnd, GWLP_USERDATA, (LONG_PTR)this);
+        OnCreate();
+        m_is_initialize = true;
+    }
+
     OnUpdate();
 
-    MSG msg;
+    MSG msg = {};
     while (::PeekMessage(&msg, NULL, 0, 0, PM_REMOVE) > 0)
     {
         TranslateMessage(&msg);
@@ -95,12 +110,8 @@ void Window::Broadcast()
     }
 
     ::Sleep(1);
-}
 
-void Window::Release()
-{
-    ::DestroyWindow(m_hwnd);
-    m_hwnd = nullptr;
+    return true;
 }
 
 RECT Window::GetClientWindowRect() const
@@ -108,11 +119,6 @@ RECT Window::GetClientWindowRect() const
     RECT rc;
     ::GetClientRect(m_hwnd, &rc);
     return rc;
-}
-
-void Window::SetWindowHandle(HWND hwnd)
-{
-    m_hwnd = hwnd;
 }
 
 void Window::OnCreate()

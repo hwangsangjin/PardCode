@@ -9,7 +9,7 @@ public:
 	ConstantBuffer(void* buffer, UINT buffer_size, Graphics* graphics);
 	~ConstantBuffer();
 
-	void Update(DeviceContext* device_context, void* buffer);
+	void Update(DeviceContextPtr device_context, void* buffer);
 
 	ID3D11Buffer* GetBuffer() const;
 

@@ -2,14 +2,25 @@
 
 int main()
 {
-	App app;
-	if (app.Initialize())
+	try
 	{
-		while (app.IsRunning())
+		Engine::Create();
+	}
+	catch (...) { return -1; }
+
+	{
+		try
 		{
-			app.Broadcast();
+			App app;
+			while (app.IsRunning());
+		}
+		catch (...)
+		{
+			Engine::Release();
+			return -1;
 		}
 	}
 
+	Engine::Release();
 	return 0;
 }

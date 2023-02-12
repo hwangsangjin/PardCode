@@ -1,4 +1,5 @@
 #include <cassert>
+#include <exception>
 #include "ConstantBuffer.h"
 #include "DeviceContext.h"
 #include "Graphics.h"
@@ -19,18 +20,23 @@ ConstantBuffer::ConstantBuffer(void* buffer, UINT buffer_size, Graphics* graphic
     init_data.pSysMem = buffer;
 
     // 버퍼 생성
-    m_graphics->GetD3DDevice()->CreateBuffer(&buff_desc, &init_data, &m_buffer);
-    assert(m_buffer);
+    if (FAILED(m_graphics->GetD3DDevice()->CreateBuffer(&buff_desc, &init_data, &m_buffer)))
+    {
+        throw std::exception("ConstantBuffer not created successfully");
+        assert(m_buffer);
+    }
 }
 
 ConstantBuffer::~ConstantBuffer()
 {
-    assert(m_buffer);
-    m_buffer->Release();
-    m_buffer = nullptr;
+    if (m_buffer)
+    {
+        m_buffer->Release();
+        m_buffer = nullptr;
+    }
 }
 
-void ConstantBuffer::Update(DeviceContext* device_context, void* buffer)
+void ConstantBuffer::Update(DeviceContextPtr device_context, void* buffer)
 {
     device_context->GetDeviceContext()->UpdateSubresource(m_buffer, NULL, nullptr, buffer, NULL, NULL);
 }

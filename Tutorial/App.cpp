@@ -4,15 +4,13 @@
 #include "App.h"
 #include "Input.h"
 #include "Vector3.h"
-#include "Engine.h"
-#include "Graphics.h"
 #include "SwapChain.h"
 #include "DeviceContext.h"
+#include "ConstantBuffer.h"
+#include "IndexBuffer.h"
 #include "VertexBuffer.h"
 #include "VertexShader.h"
 #include "PixelShader.h"
-#include "ConstantBuffer.h"
-#include "IndexBuffer.h"
 
 struct Vertex
 {
@@ -36,8 +34,6 @@ void App::OnCreate()
 
 	Input::GetInstance()->AddListener(this);
 	Input::GetInstance()->ShowCursor(false);
-
-	Engine::GetInstance()->Initialize();
 
 	RECT rect = GetClientWindowRect();
 	m_swap_chain = Engine::GetInstance()->GetGraphics()->CreateSwapChain(m_hwnd, rect.right - rect.left, rect.bottom - rect.top);
@@ -170,7 +166,6 @@ void App::OnKillFocus()
 void App::OnDestroy()
 {
 	Window::OnDestroy();
-	Engine::GetInstance()->Release();
 }
 
 void App::OnKeyUp(int key)
