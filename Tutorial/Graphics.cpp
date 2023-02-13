@@ -40,10 +40,10 @@ Graphics::Graphics()
 
     if (FAILED(hr))
     {
-        throw std::exception("Device not created successfully");
         assert(m_d3d_device);
         assert(m_feature_level);
         assert(m_immediate_context);
+        throw std::exception("Device not created successfully");
     }
 
     m_device_context = std::make_shared<DeviceContext>(m_immediate_context, this);

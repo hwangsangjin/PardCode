@@ -24,8 +24,8 @@ IndexBuffer::IndexBuffer(void* indices, UINT index_count, Graphics* graphics)
     // 버퍼 생성
     if (FAILED(Engine::GetInstance()->GetGraphics()->GetD3DDevice()->CreateBuffer(&buff_desc, &init_data, &m_buffer)))
     {
-        throw std::exception("IndexBuffer not created successfully");
         assert(m_buffer);
+        throw std::exception("IndexBuffer not created successfully");
     }
 }
 

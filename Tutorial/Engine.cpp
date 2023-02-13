@@ -1,12 +1,13 @@
 #include <cassert>
 #include <exception>
 #include "Engine.h"
-#include "Graphics.h"
+#include "TextureManager.h"
 
 Engine* Engine::m_engine = nullptr;
 
 void Engine::Create()
 {
+    assert(!m_engine);
     if (Engine::m_engine)
         throw std::exception("Engine already created");
 
@@ -32,13 +33,32 @@ Graphics* Engine::GetGraphics()
     return m_graphics;
 }
 
+TextureManager* Engine::GetTextureManager()
+{
+    return m_texture_manager;
+}
+
 Engine::Engine()
 {
     try
     {
         m_graphics = new Graphics();
     }
-    catch (...) { throw std::exception("Engine not created successfully"); }
+    catch (...)
+    {
+        assert(m_graphics);
+        throw std::exception("Graphics not created successfully");
+    }
+
+    try
+    {
+        m_texture_manager = new TextureManager();
+    }
+    catch (...)
+    {
+        assert(m_texture_manager);
+        throw std::exception("TextureManager not created successfully");
+    }
 }
 
 Engine::~Engine()
@@ -47,5 +67,11 @@ Engine::~Engine()
     {
         delete m_graphics;
         m_graphics = nullptr;
+    }
+
+    if (m_texture_manager)
+    {
+        delete m_texture_manager;
+        m_texture_manager = nullptr;
     }
 }

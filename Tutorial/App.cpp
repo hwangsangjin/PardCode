@@ -3,6 +3,7 @@
 #include <Windows.h>
 #include "App.h"
 #include "Input.h"
+#include "Vector2.h"
 #include "Vector3.h"
 #include "SwapChain.h"
 #include "DeviceContext.h"
@@ -15,8 +16,7 @@
 struct Vertex
 {
 	Vector3 position;
-	Vector3 color;
-	Vector3 color1;
+	Vector2 texcoord;
 };
 
 __declspec(align(16))
@@ -35,31 +35,74 @@ void App::OnCreate()
 	Input::GetInstance()->AddListener(this);
 	Input::GetInstance()->ShowCursor(false);
 
+	m_wood_texture = Engine::GetInstance()->GetTextureManager()->CreateTextureFromFile(L"Assets\\Textures\\wood.jpg");
+
 	RECT rect = GetClientWindowRect();
 	m_swap_chain = Engine::GetInstance()->GetGraphics()->CreateSwapChain(m_hwnd, rect.right - rect.left, rect.bottom - rect.top);
 	assert(m_swap_chain);
 
 	m_world_camera.SetTranslation(Vector3(0.0f, 0.0f, -2.0f));
 
-	Vertex vertices[] =
+	Vector3 position[] =
 	{
 		// Front face
-		{ Vector3(-0.5f, -0.5f, -0.5f), Vector3(1.0f, 0.0f, 0.0f), Vector3(1.0f, 0.0f, 0.0f) },
-		{ Vector3(-0.5f, 0.5f, -0.5f), Vector3(1.0f, 1.0f, 0.0f), Vector3(1.0f, 1.0f, 0.0f) },
-		{ Vector3(0.5f, 0.5f, -0.5f), Vector3(1.0f, 1.0f, 0.0f), Vector3(1.0f, 1.0f, 0.0f) },
-		{ Vector3(0.5f, -0.5f, -0.5f), Vector3(1.0f, 0.0f, 0.0f), Vector3(1.0f, 0.0f, 0.0f) },
+		{ Vector3(-0.5f, -0.5f, -0.5f) },
+		{ Vector3(-0.5f, 0.5f, -0.5f) },
+		{ Vector3(0.5f, 0.5f, -0.5f) },
+		{ Vector3(0.5f, -0.5f, -0.5f) },
 
 		// Back face
-		{ Vector3(0.5f, -0.5f, 0.5f), Vector3(0.0f, 1.0f, 0.0f), Vector3(0.0f, 1.0f, 0.0f) },
-		{ Vector3(0.5f, 0.5f, 0.5f), Vector3(0.0f, 1.0f, 1.0f), Vector3(0.0f, 1.0f, 1.0f) },
-		{ Vector3(-0.5f, 0.5f, 0.5f), Vector3(0.0f, 1.0f, 1.0f), Vector3(0.0f, 1.0f, 1.0f) },
-		{ Vector3(-0.5f, -0.5f, 0.5f), Vector3(0.0f, 1.0f, 0.0f), Vector3(0.0f, 1.0f, 0.0f) }
+		{ Vector3(0.5f, -0.5f, 0.5f) },
+		{ Vector3(0.5f, 0.5f, 0.5f) },
+		{ Vector3(-0.5f, 0.5f, 0.5f) },
+		{ Vector3(-0.5f, -0.5f, 0.5f) }
+	};
+
+	Vector2 texcoord[] =
+	{
+		{ Vector2(0.0f, 0.0f) },
+		{ Vector2(0.0f, 1.0f) },
+		{ Vector2(1.0f, 0.0f) },
+		{ Vector2(1.0f, 1.0f) },
+	};
+
+	Vertex vertices[] =
+	{
+		{ position[0], texcoord[1] },
+		{ position[1], texcoord[0] },
+		{ position[2], texcoord[2] },
+		{ position[3], texcoord[3] },
+
+		{ position[4], texcoord[1] },
+		{ position[5], texcoord[0] },
+		{ position[6], texcoord[2] },
+		{ position[7], texcoord[3] },
+
+		{ position[1], texcoord[1] },
+		{ position[6], texcoord[0] },
+		{ position[5], texcoord[2] },
+		{ position[2], texcoord[3] },
+
+		{ position[7], texcoord[1] },
+		{ position[0], texcoord[0] },
+		{ position[3], texcoord[2] },
+		{ position[4], texcoord[3] },
+
+		{ position[3], texcoord[1] },
+		{ position[2], texcoord[0] },
+		{ position[5], texcoord[2] },
+		{ position[4], texcoord[3] },
+
+		{ position[7], texcoord[1] },
+		{ position[6], texcoord[0] },
+		{ position[1], texcoord[2] },
+		{ position[0], texcoord[3] }
 	};
 	UINT vertex_count = ARRAYSIZE(vertices);
 
 	unsigned int indices[] =
 	{
-		// Bront side
+		// Front side
 		0, 1, 2,	// First triangle
 		2, 3, 0,	// Second triangle
 
@@ -68,20 +111,20 @@ void App::OnCreate()
 		6, 7, 4,
 
 		// Top side
-		1, 6, 5,
-		5, 2, 1,
+		8, 9, 10,
+		10, 11, 8,
 
-		// Bottom size
-		7, 0, 3,
-		3, 4, 7,
+		// Bottom side
+		12, 13, 14,
+		14, 15, 12,
 
-		// Right size
-		3, 2, 5,
-		5, 4, 3,
+		// Right side
+		16, 17, 18,
+		18, 19, 16,
 
 		// Left side
-		7, 6, 1,
-		1, 0, 7
+		20, 21, 22,
+		22, 23, 20
 	};
 	UINT index_count = ARRAYSIZE(indices);
 
@@ -130,12 +173,13 @@ void App::OnUpdate()
 
 	// 상수 버퍼 설정
 	Update();
-	Engine::GetInstance()->GetGraphics()->GetDeviceContext()->SetConstantBuffer(m_constant_buffer, m_vertex_shader);
-	Engine::GetInstance()->GetGraphics()->GetDeviceContext()->SetConstantBuffer(m_constant_buffer, m_pixel_shader);
+	Engine::GetInstance()->GetGraphics()->GetDeviceContext()->SetConstantBuffer(m_vertex_shader, m_constant_buffer);
+	Engine::GetInstance()->GetGraphics()->GetDeviceContext()->SetConstantBuffer(m_pixel_shader, m_constant_buffer);
 
 	// 셰이더 설정
 	Engine::GetInstance()->GetGraphics()->GetDeviceContext()->SetVertexShader(m_vertex_shader);
 	Engine::GetInstance()->GetGraphics()->GetDeviceContext()->SetPixelShader(m_pixel_shader);
+	Engine::GetInstance()->GetGraphics()->GetDeviceContext()->SetTexture(m_pixel_shader, m_wood_texture);
 
 	// 정점 버퍼 설정
 	Engine::GetInstance()->GetGraphics()->GetDeviceContext()->SetVertexBuffer(m_vertex_buffer);

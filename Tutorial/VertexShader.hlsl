@@ -1,15 +1,13 @@
 struct VS_INPUT
 {
-	float4 position : POSITION;
-	float3 color : COLOR;
-	float3 color1 : COLOR1;
+	float4 position : POSITION0;
+	float2 texcoord : TEXCOORD0;
 };
 
 struct VS_OUTPUT
 {
 	float4 position : SV_POSITION;
-	float3 color : COLOR;
-	float3 color1 : COLOR1;
+	float2 texcoord : TEXCOORD0;
 };
 
 cbuffer CONSTANT : register(b0)
@@ -26,14 +24,11 @@ VS_OUTPUT main(VS_INPUT input)
 	
 	// World space
 	output.position = mul(input.position, world);
-	
 	// View space
 	output.position = mul(output.position, view);
-	
 	// Projection space
 	output.position = mul(output.position, projection);
 	
-	output.color = input.color;
-	output.color1 = input.color1;
+	output.texcoord = input.texcoord;
 	return output;
 }

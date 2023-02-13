@@ -24,24 +24,23 @@ VertexBuffer::VertexBuffer(void* vertices, UINT vertex_size, UINT vertex_count, 
     // 버퍼 생성
     if (FAILED(m_graphics->GetD3DDevice()->CreateBuffer(&buff_desc, &init_data, &m_buffer)))
     {
-        throw std::exception("VertexBuffer not created successfully");
         assert(m_buffer);
+        throw std::exception("VertexBuffer not created successfully");
     }
 
     // 입력 레이아웃 구조체
     D3D11_INPUT_ELEMENT_DESC layout[] =
     {
         {"POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA, 0},
-        {"COLOR", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 12, D3D11_INPUT_PER_VERTEX_DATA, 0},
-        {"COLOR", 1, DXGI_FORMAT_R32G32B32_FLOAT, 0, 24, D3D11_INPUT_PER_VERTEX_DATA, 0}
+        {"TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT, 0, 12, D3D11_INPUT_PER_VERTEX_DATA, 0}
     };
     UINT layout_size = ARRAYSIZE(layout);
 
     // 입력 레이아웃 생성
     if (FAILED(m_graphics->GetD3DDevice()->CreateInputLayout(layout, layout_size, shader_byte_code, shader_byte_size, &m_input_layout)))
     {
-        throw std::exception("InputLayout not created successfully");
         assert(m_input_layout);
+        throw std::exception("InputLayout not created successfully");
     }
 }
 

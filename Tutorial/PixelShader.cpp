@@ -8,8 +8,8 @@ PixelShader::PixelShader(const void* shader_byte_code, size_t byte_code_size, Gr
 {
     if (FAILED(m_graphics->GetD3DDevice()->CreatePixelShader(shader_byte_code, byte_code_size, nullptr, &m_pixel_shader)))
     {
-        throw std::exception("PixelShader not created successfully");
         assert(m_pixel_shader);
+        throw std::exception("PixelShader not created successfully");
     }
 }
 
