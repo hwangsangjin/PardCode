@@ -46,6 +46,35 @@ SwapChain::SwapChain(HWND hwnd, UINT width, UINT height, Graphics* graphics)
         assert(m_render_target_view);
         throw std::exception("RenderTargetView not created successfully");
     }
+
+    D3D11_TEXTURE2D_DESC texture_desc = {};
+    texture_desc.Width = width;
+    texture_desc.Height = height;
+    texture_desc.Format = DXGI_FORMAT_D24_UNORM_S8_UINT;
+    texture_desc.Usage = D3D11_USAGE_DEFAULT;
+    texture_desc.BindFlags = D3D11_BIND_DEPTH_STENCIL;
+    texture_desc.MipLevels = 1;
+    texture_desc.SampleDesc.Count = 1;
+    texture_desc.SampleDesc.Quality = 0;
+    texture_desc.MiscFlags = 0;
+    texture_desc.ArraySize = 1;
+    texture_desc.CPUAccessFlags = 0;
+
+    hr = device->CreateTexture2D(&texture_desc, nullptr, &buffer);
+    if (FAILED(hr))
+    {
+        assert(buffer);
+        throw std::exception("Texture2D not created successfully");
+    }
+
+    hr = device->CreateDepthStencilView(buffer, NULL, &m_depth_stencil_view);
+    buffer->Release();
+
+    if (FAILED(hr))
+    {
+        assert(m_depth_stencil_view);
+        throw std::exception("DepthStencilView not created successfully");
+    }
 }
 
 SwapChain::~SwapChain()
@@ -65,4 +94,9 @@ void SwapChain::Present(bool vsync)
 ID3D11RenderTargetView* SwapChain::GetRenderTargetView() const
 {
     return m_render_target_view;
+}
+
+ID3D11DepthStencilView* SwapChain::GetDepthStencilView() const
+{
+    return m_depth_stencil_view;
 }

@@ -39,7 +39,8 @@ private:
 	PixelShaderPtr m_pixel_shader = nullptr;
 	ConstantBufferPtr m_constant_buffer = nullptr;
 	IndexBufferPtr m_index_buffer = nullptr;
-	TexturePtr m_wood_texture = nullptr;
+	TexturePtr m_texture = nullptr;
+	MeshPtr m_mesh = nullptr;
 
 	float m_old_delta = 0.0f;
 	float m_new_delta = 0.0f;

@@ -12,6 +12,7 @@
 #include "VertexBuffer.h"
 #include "VertexShader.h"
 #include "PixelShader.h"
+#include "mesh.h"
 
 struct Vertex
 {
@@ -35,7 +36,8 @@ void App::OnCreate()
 	Input::GetInstance()->AddListener(this);
 	Input::GetInstance()->ShowCursor(false);
 
-	m_wood_texture = Engine::GetInstance()->GetTextureManager()->CreateTextureFromFile(L"Assets\\Textures\\wood.jpg");
+	m_texture = Engine::GetInstance()->GetTextureManager()->CreateTextureFromFile(L"Assets\\Textures\\brick.png");
+	m_mesh = Engine::GetInstance()->GetMeshManager()->CreateMeshFromFile(L"Assets\\Meshes\\teapot.obj");
 
 	RECT rect = GetClientWindowRect();
 	m_swap_chain = Engine::GetInstance()->GetGraphics()->CreateSwapChain(m_hwnd, rect.right - rect.left, rect.bottom - rect.top);
@@ -179,16 +181,16 @@ void App::OnUpdate()
 	// 셰이더 설정
 	Engine::GetInstance()->GetGraphics()->GetDeviceContext()->SetVertexShader(m_vertex_shader);
 	Engine::GetInstance()->GetGraphics()->GetDeviceContext()->SetPixelShader(m_pixel_shader);
-	Engine::GetInstance()->GetGraphics()->GetDeviceContext()->SetTexture(m_pixel_shader, m_wood_texture);
+	Engine::GetInstance()->GetGraphics()->GetDeviceContext()->SetTexture(m_pixel_shader, m_texture);
 
 	// 정점 버퍼 설정
-	Engine::GetInstance()->GetGraphics()->GetDeviceContext()->SetVertexBuffer(m_vertex_buffer);
+	Engine::GetInstance()->GetGraphics()->GetDeviceContext()->SetVertexBuffer(m_mesh->GetVertexBuffer());
 
 	// 인덱스 버퍼 설정
-	Engine::GetInstance()->GetGraphics()->GetDeviceContext()->SetIndexBuffer(m_index_buffer);
+	Engine::GetInstance()->GetGraphics()->GetDeviceContext()->SetIndexBuffer(m_mesh->GetIndexBuffer());
 
 	// 삼각형 그리기
-	Engine::GetInstance()->GetGraphics()->GetDeviceContext()->DrawIndexedTriangleList(m_index_buffer->GetIndexCount(), 0, 0);
+	Engine::GetInstance()->GetGraphics()->GetDeviceContext()->DrawIndexedTriangleList(m_mesh->GetIndexBuffer()->GetIndexCount(), 0, 0);
 	m_swap_chain->Present(true);
 
 	// 프레임 설정

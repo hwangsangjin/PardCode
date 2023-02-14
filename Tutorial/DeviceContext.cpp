@@ -117,10 +117,13 @@ void DeviceContext::DrawTriangleStrip(UINT vertex_count, UINT start_vertex_locat
 
 void DeviceContext::ClearRenderTargetColor(const SwapChainPtr& swap_chain, float red, float green, float blue, float alpha)
 {
+	assert(m_device_context);
 	FLOAT clear_color[] = { red, green, blue, alpha };
 	m_device_context->ClearRenderTargetView(swap_chain->GetRenderTargetView(), clear_color);
-	assert(m_device_context);
-	auto render_target_views = swap_chain->GetRenderTargetView();
-	assert(render_target_views);
-	m_device_context->OMSetRenderTargets(1, &render_target_views, nullptr);
+	m_device_context->ClearDepthStencilView(swap_chain->GetDepthStencilView(), D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1, 0);
+	auto render_target_view = swap_chain->GetRenderTargetView();
+	assert(render_target_view);
+	auto depth_stencil_view = swap_chain->GetDepthStencilView();
+	assert(depth_stencil_view);
+	m_device_context->OMSetRenderTargets(1, &render_target_view, depth_stencil_view);
 }

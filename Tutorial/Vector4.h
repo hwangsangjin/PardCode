@@ -19,7 +19,7 @@ public:
 	void SetZ(const float& z);
 	void SetW(const float& w);
 
-//private:
+private:
 	float m_x = 0.0f;
 	float m_y = 0.0f;
 	float m_z = 0.0f;

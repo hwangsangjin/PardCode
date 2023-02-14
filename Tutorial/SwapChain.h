@@ -12,6 +12,7 @@ public:
 	void Present(bool vsync);
 
 	ID3D11RenderTargetView* GetRenderTargetView() const;
+	ID3D11DepthStencilView* GetDepthStencilView() const;
 
 private:
 	IDXGISwapChain* m_dxgi_swap_chain = nullptr;
