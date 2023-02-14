@@ -229,5 +229,8 @@
     <FxCompile Include="MeshVertexLayoutShader.hlsl">
       <Filter>Engine\Resource\Mesh</Filter>
     </FxCompile>
+    <FxCompile Include="SkyBoxShader.hlsl">
+      <Filter>Engine\Graphics\PixelShader</Filter>
+    </FxCompile>
   </ItemGroup>
 </Project>

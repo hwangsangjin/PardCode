@@ -38,127 +38,46 @@ void App::OnCreate()
 	Input::GetInstance()->AddListener(this);
 	Input::GetInstance()->ShowCursor(false);
 
+	m_mesh = Engine::GetInstance()->GetMeshManager()->CreateMeshFromFile(L"Assets\\Meshes\\suzanne.obj");
 	m_texture = Engine::GetInstance()->GetTextureManager()->CreateTextureFromFile(L"Assets\\Textures\\brick.png");
-	m_mesh = Engine::GetInstance()->GetMeshManager()->CreateMeshFromFile(L"Assets\\Meshes\\statue.obj");
+
+	m_skybox_mesh = Engine::GetInstance()->GetMeshManager()->CreateMeshFromFile(L"Assets\\Meshes\\sphere.obj");
+	m_skybox_texture = Engine::GetInstance()->GetTextureManager()->CreateTextureFromFile(L"Assets\\Textures\\sky.jpg");
 
 	RECT rect = GetClientWindowRect();
 	m_swap_chain = Engine::GetInstance()->GetGraphics()->CreateSwapChain(m_hwnd, rect.right - rect.left, rect.bottom - rect.top);
 	assert(m_swap_chain);
 
-	m_world_camera.SetTranslation(Vector3(0.0f, 0.0f, -1.0f));
+	m_world.SetTranslation(Vector3(0.0f, 0.0f, -1.0f));
 
-	Vector3 position[] =
-	{
-		// Front face
-		{ Vector3(-0.5f, -0.5f, -0.5f) },
-		{ Vector3(-0.5f, 0.5f, -0.5f) },
-		{ Vector3(0.5f, 0.5f, -0.5f) },
-		{ Vector3(0.5f, -0.5f, -0.5f) },
-
-		// Back face
-		{ Vector3(0.5f, -0.5f, 0.5f) },
-		{ Vector3(0.5f, 0.5f, 0.5f) },
-		{ Vector3(-0.5f, 0.5f, 0.5f) },
-		{ Vector3(-0.5f, -0.5f, 0.5f) }
-	};
-
-	Vector2 texcoord[] =
-	{
-		{ Vector2(0.0f, 0.0f) },
-		{ Vector2(0.0f, 1.0f) },
-		{ Vector2(1.0f, 0.0f) },
-		{ Vector2(1.0f, 1.0f) },
-	};
-
-	Vertex vertices[] =
-	{
-		{ position[0], texcoord[1] },
-		{ position[1], texcoord[0] },
-		{ position[2], texcoord[2] },
-		{ position[3], texcoord[3] },
-
-		{ position[4], texcoord[1] },
-		{ position[5], texcoord[0] },
-		{ position[6], texcoord[2] },
-		{ position[7], texcoord[3] },
-
-		{ position[1], texcoord[1] },
-		{ position[6], texcoord[0] },
-		{ position[5], texcoord[2] },
-		{ position[2], texcoord[3] },
-
-		{ position[7], texcoord[1] },
-		{ position[0], texcoord[0] },
-		{ position[3], texcoord[2] },
-		{ position[4], texcoord[3] },
-
-		{ position[3], texcoord[1] },
-		{ position[2], texcoord[0] },
-		{ position[5], texcoord[2] },
-		{ position[4], texcoord[3] },
-
-		{ position[7], texcoord[1] },
-		{ position[6], texcoord[0] },
-		{ position[1], texcoord[2] },
-		{ position[0], texcoord[3] }
-	};
-	UINT vertex_count = ARRAYSIZE(vertices);
-
-	unsigned int indices[] =
-	{
-		// Front side
-		0, 1, 2,	// First triangle
-		2, 3, 0,	// Second triangle
-
-		// Back side
-		4, 5, 6,
-		6, 7, 4,
-
-		// Top side
-		8, 9, 10,
-		10, 11, 8,
-
-		// Bottom side
-		12, 13, 14,
-		14, 15, 12,
-
-		// Right side
-		16, 17, 18,
-		18, 19, 16,
-
-		// Left side
-		20, 21, 22,
-		22, 23, 20
-	};
-	UINT index_count = ARRAYSIZE(indices);
-
+	// 정점 셰이더 생성
 	void* shader_byte_code = nullptr;
 	size_t shader_byte_size = 0;
 	Engine::GetInstance()->GetGraphics()->CompileVertexShader(L"VertexShader.hlsl", "main", &shader_byte_code, &shader_byte_size);
 	assert(shader_byte_code);
-	assert(shader_byte_size);
-
-	m_vertex_buffer = Engine::GetInstance()->GetGraphics()->CreateVertexBuffer(vertices, sizeof(Vertex), vertex_count, shader_byte_code, shader_byte_size);
-	assert(m_vertex_buffer);
-
 	m_vertex_shader = Engine::GetInstance()->GetGraphics()->CreateVertexShader(shader_byte_code, shader_byte_size);
 	assert(m_vertex_shader);
 	Engine::GetInstance()->GetGraphics()->ReleaseCompiledShader();
 
+	// 픽셀 셰이더 생성
 	Engine::GetInstance()->GetGraphics()->CompilePixelShader(L"PixelShader.hlsl", "main", &shader_byte_code, &shader_byte_size);
 	assert(shader_byte_code);
-	assert(shader_byte_size);
 	m_pixel_shader = Engine::GetInstance()->GetGraphics()->CreatePixelShader(shader_byte_code, shader_byte_size);
 	assert(m_pixel_shader);
 	Engine::GetInstance()->GetGraphics()->ReleaseCompiledShader();
 
-	m_index_buffer = Engine::GetInstance()->GetGraphics()->CreateIndexBuffer(indices, index_count);
-	assert(m_index_buffer);
+	Engine::GetInstance()->GetGraphics()->CompilePixelShader(L"SkyBoxShader.hlsl", "main", &shader_byte_code, &shader_byte_size);
+	assert(shader_byte_code);
+	m_skybox_pixel_shader = Engine::GetInstance()->GetGraphics()->CreatePixelShader(shader_byte_code, shader_byte_size);
+	assert(m_skybox_pixel_shader);
+	Engine::GetInstance()->GetGraphics()->ReleaseCompiledShader();
 
+	// 상수 버퍼 생성
 	Constant constant;
 	m_constant_buffer = Engine::GetInstance()->GetGraphics()->CreateConstantBuffer(&constant, sizeof(Constant));
 	assert(m_constant_buffer);
-	assert(&constant);
+	m_skybox_constant_buffer = Engine::GetInstance()->GetGraphics()->CreateConstantBuffer(&constant, sizeof(Constant));
+	assert(m_skybox_constant_buffer);
 }
 
 void App::OnUpdate()
@@ -167,6 +86,11 @@ void App::OnUpdate()
 
 	Input::GetInstance()->Update();
 
+	// 프레임 설정
+	m_old_delta = m_new_delta;
+	m_new_delta = static_cast<float>(::GetTickCount64());
+	m_delta_time = m_old_delta ? (m_new_delta - m_old_delta) / 1000.0f : 0.0f;
+
 	// 렌더 타겟 지우기
 	Engine::GetInstance()->GetGraphics()->GetDeviceContext()->ClearRenderTargetColor(m_swap_chain, 0.0f, 0.0f, 0.0f, 1.0f);
 
@@ -174,30 +98,17 @@ void App::OnUpdate()
 	RECT rect = GetClientWindowRect();
 	Engine::GetInstance()->GetGraphics()->GetDeviceContext()->SetViewportSize(static_cast<UINT>(rect.right - rect.left), static_cast<UINT>(rect.bottom - rect.top));
 
-	// 상수 버퍼 설정
+	// 변환 행렬 계산
 	Update();
-	Engine::GetInstance()->GetGraphics()->GetDeviceContext()->SetConstantBuffer(m_vertex_shader, m_constant_buffer);
-	Engine::GetInstance()->GetGraphics()->GetDeviceContext()->SetConstantBuffer(m_pixel_shader, m_constant_buffer);
 
-	// 셰이더 설정
-	Engine::GetInstance()->GetGraphics()->GetDeviceContext()->SetVertexShader(m_vertex_shader);
-	Engine::GetInstance()->GetGraphics()->GetDeviceContext()->SetPixelShader(m_pixel_shader);
-	Engine::GetInstance()->GetGraphics()->GetDeviceContext()->SetTexture(m_pixel_shader, m_texture);
+	// 렌더링
+	Engine::GetInstance()->GetGraphics()->SetRasterizerState(false);
+	Render(m_mesh, m_texture, m_vertex_shader, m_pixel_shader, m_constant_buffer);
+	Engine::GetInstance()->GetGraphics()->SetRasterizerState(true);
+	Render(m_skybox_mesh, m_skybox_texture, m_vertex_shader, m_skybox_pixel_shader, m_skybox_constant_buffer);
 
-	// 정점 버퍼 설정
-	Engine::GetInstance()->GetGraphics()->GetDeviceContext()->SetVertexBuffer(m_mesh->GetVertexBuffer());
-
-	// 인덱스 버퍼 설정
-	Engine::GetInstance()->GetGraphics()->GetDeviceContext()->SetIndexBuffer(m_mesh->GetIndexBuffer());
-
-	// 삼각형 그리기
-	Engine::GetInstance()->GetGraphics()->GetDeviceContext()->DrawIndexedTriangleList(m_mesh->GetIndexBuffer()->GetIndexCount(), 0, 0);
+	// 페이지 플리핑
 	m_swap_chain->Present(true);
-
-	// 프레임 설정
-	m_old_delta = m_new_delta;
-	m_new_delta = static_cast<float>(::GetTickCount64());
-	m_delta_time = m_old_delta ? (m_new_delta - m_old_delta) / 1000.0f : 0.0f;
 }
 
 void App::OnFocus()
@@ -225,22 +136,18 @@ void App::OnKeyDown(int key)
 {
 	if (key == 'W')
 	{
-		//m_rotation_x += 3.14f * m_delta_time;
 		m_forward = 1.0f;
 	}
 	else if (key == 'S')
 	{
-		//m_rotation_x -= 3.14f * m_delta_time;
 		m_forward = -1.0f;
 	}
 	else if (key == 'A')
 	{
-		//m_rotation_y += 3.14f * m_delta_time;
 		m_rightward = -1.0f;
 	}
 	else if (key == 'D')
 	{
-		//m_rotation_y -= 3.14f * m_delta_time;
 		m_rightward = 1.0f;
 	}
 }
@@ -278,68 +185,39 @@ void App::OnRightButtonDown(const Point& point)
 
 void App::Update()
 {
-	Constant constant;
-	//constant.time = static_cast<unsigned int>(::GetTickCount64());
+	UpdateCamera();
+	UpdateModel();
+	UpdateSkyBox();
+}
 
-	m_delta_position += m_delta_time / 10.0f;
-	if (m_delta_position >= 1.0f)
-		m_delta_position = 0.0f;
-
-	m_delta_scale += m_delta_time / 0.55f;
-
-	Matrix4x4 temp;
-	//temp.SetTranslation(Vector3::LinearInterpolation(Vector3(-1.5f, -1.5f, 0.0f), Vector3(1.5f, 1.5f, 0.0f), m_delta_position));
-
-	//constant.world.SetScale(Vector3(m_scale_cube, m_scale_cube, m_scale_cube));
-	//constant.world.SetTranslation(Vector3::LinearInterpolation(Vector3(-2.0f, -2.0f, 0.0f), Vector3(2.0f, 2.0f, 0.0f), m_delta_position));
-	//constant.world.SetScale(Vector3::LinearInterpolation(Vector3(0.5f, 0.5f, 0.0f), Vector3(1.0f, 1.0f, 0.0f), (std::sin(m_delta_scale) + 1.0f) / 2.0f));
-
-	/*temp.SetIdentity();
-	temp.SetRotationX(m_rotation_x);
-	constant.world *= temp;
-
-	temp.SetIdentity();
-	temp.SetRotationY(m_rotation_y);
-	constant.world *= temp;
-
-	temp.SetIdentity();
-	temp.SetRotationZ(m_rotation_z);
-	constant.world *= temp;*/
-
-	Matrix4x4 light_rotation_matrix;
-	light_rotation_matrix.SetIdentity();
-	light_rotation_matrix.SetRotationY(m_light_rotation_y);
-
-	m_light_rotation_y += 0.785f * m_delta_time;
-
-	constant.light_direction = light_rotation_matrix.GetZDirection();
-	
-	constant.world.SetIdentity();
-
-	Matrix4x4 world_camera;
-	world_camera.SetIdentity();
+void App::UpdateCamera()
+{
+	Matrix4x4 world, temp;
+	world.SetIdentity();
 
 	temp.SetIdentity();
 	temp.SetRotationX(m_rotation_x);
-	world_camera *= temp;
+	world *= temp;
 
 	temp.SetIdentity();
 	temp.SetRotationY(m_rotation_y);
-	world_camera *= temp;
+	world *= temp;
 
-	Vector3 new_position = m_world_camera.GetTranslation() + world_camera.GetZDirection() * (m_forward * 0.01f);
+	Vector3 new_position = m_world.GetTranslation() + world.GetZDirection() * (m_forward * 0.05f);
 
-	new_position = new_position + world_camera.GetXDirection() * (m_rightward * 0.01f);
+	new_position = new_position + world.GetXDirection() * (m_rightward * 0.05f);
 
-	world_camera.SetTranslation(new_position);
+	world.SetTranslation(new_position);
 
-	constant.camera_position = new_position;
+	m_world = world;
 
-	m_world_camera = world_camera;
+	world.Inverse();
 
-	world_camera.Inverse();
+	m_view = world;
 
-	constant.view = world_camera;
+	int width = GetClientWindowRect().right - GetClientWindowRect().left;
+	int height = GetClientWindowRect().bottom - GetClientWindowRect().top;
+
 	/*constant.projection.SetOrthographicProjection
 	(
 		(GetClientWindowRect().right - GetClientWindowRect().left) / 300.0f,
@@ -348,10 +226,56 @@ void App::Update()
 		4.0f
 	);*/
 
-	int width = GetClientWindowRect().right - GetClientWindowRect().left;
-	int height = GetClientWindowRect().bottom - GetClientWindowRect().top;
+	m_projection.SetPerspectiveProjection(1.57f, ((float)width / (float)height), 0.1f, 100.0f);
+}
 
-	constant.projection.SetPerspectiveProjection(1.57f, (float)(width / (float)height), 0.1f, 100.0f);
+void App::UpdateModel()
+{
+	Matrix4x4 temp;
+	Matrix4x4 light_rotation_matrix;
+	light_rotation_matrix.SetIdentity();
+	light_rotation_matrix.SetRotationY(m_light_rotation_y);
+	m_light_rotation_y += 0.785f * m_delta_time;
+
+	Constant constant;
+	constant.world.SetIdentity();
+	constant.view = m_view;
+	constant.projection = m_projection;
+	constant.camera_position = m_world.GetTranslation();
+	constant.light_direction = light_rotation_matrix.GetZDirection();
 
 	m_constant_buffer->Update(Engine::GetInstance()->GetGraphics()->GetDeviceContext(), &constant);
+}
+
+void App::UpdateSkyBox()
+{
+	Constant constant;
+	constant.world.SetIdentity();
+	constant.world.SetScale(Vector3(100.0f, 100.0f, 100.0f));
+	constant.world.SetTranslation(m_world.GetTranslation());
+	constant.view = m_view;
+	constant.projection = m_projection;
+
+	m_skybox_constant_buffer->Update(Engine::GetInstance()->GetGraphics()->GetDeviceContext(), &constant);
+}
+
+void App::Render(const MeshPtr& mesh, const TexturePtr& texture, const VertexShaderPtr& vertex_shader, const PixelShaderPtr& pixel_shader, const ConstantBufferPtr& constant_buffer)
+{
+	// 상수 버퍼 설정
+	Engine::GetInstance()->GetGraphics()->GetDeviceContext()->SetConstantBuffer(vertex_shader, constant_buffer);
+	Engine::GetInstance()->GetGraphics()->GetDeviceContext()->SetConstantBuffer(pixel_shader, constant_buffer);
+
+	// 셰이더 설정
+	Engine::GetInstance()->GetGraphics()->GetDeviceContext()->SetVertexShader(vertex_shader);
+	Engine::GetInstance()->GetGraphics()->GetDeviceContext()->SetPixelShader(pixel_shader);
+	Engine::GetInstance()->GetGraphics()->GetDeviceContext()->SetTexture(pixel_shader, texture);
+
+	// 정점 버퍼 설정
+	Engine::GetInstance()->GetGraphics()->GetDeviceContext()->SetVertexBuffer(mesh->GetVertexBuffer());
+
+	// 인덱스 버퍼 설정
+	Engine::GetInstance()->GetGraphics()->GetDeviceContext()->SetIndexBuffer(mesh->GetIndexBuffer());
+
+	// 삼각형 그리기
+	Engine::GetInstance()->GetGraphics()->GetDeviceContext()->DrawIndexedTriangleList(mesh->GetIndexBuffer()->GetIndexCount(), 0, 0);
 }

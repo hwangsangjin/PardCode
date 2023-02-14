@@ -23,7 +23,11 @@ public:
 	IDXGIFactory* GetDXGIFactory() const;
 	DeviceContextPtr GetDeviceContext() const;
 
+	void SetRasterizerState(bool cull_front);
+
 private:
+	void InitializeRasterizerState();
+
 	D3D_FEATURE_LEVEL m_feature_level = D3D_FEATURE_LEVEL_11_0;
 	ID3D11Device* m_d3d_device = nullptr;
 	DeviceContextPtr m_device_context = nullptr;
@@ -34,5 +38,7 @@ private:
 	ID3DBlob* m_blob = nullptr;
 	ID3D11VertexShader* m_vertex_shader = nullptr;
 	ID3D11PixelShader* m_pixel_shader = nullptr;
+	ID3D11RasterizerState* m_cull_front_state = nullptr;
+	ID3D11RasterizerState* m_cull_back_state = nullptr;
 };
 
