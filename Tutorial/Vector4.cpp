@@ -1,3 +1,4 @@
+#include "Vector3.h"
 #include "Vector4.h"
 #include "Matrix4x4.h"
 
@@ -14,6 +15,14 @@ Vector4::Vector4(const Vector4& vector)
 	, m_y(vector.m_y)
 	, m_z(vector.m_z)
 	, m_w(vector.m_w)
+{
+}
+
+Vector4::Vector4(const Vector3& vector)
+	: m_x(vector.GetX())
+	, m_y(vector.GetY())
+	, m_z(vector.GetZ())
+	, m_w(1.0f)
 {
 }
 

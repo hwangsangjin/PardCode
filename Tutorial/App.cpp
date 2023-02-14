@@ -5,6 +5,7 @@
 #include "Input.h"
 #include "Vector2.h"
 #include "Vector3.h"
+#include "Vector4.h"
 #include "SwapChain.h"
 #include "DeviceContext.h"
 #include "ConstantBuffer.h"
@@ -12,7 +13,7 @@
 #include "VertexBuffer.h"
 #include "VertexShader.h"
 #include "PixelShader.h"
-#include "mesh.h"
+#include "Mesh.h"
 
 struct Vertex
 {
@@ -26,7 +27,8 @@ struct Constant
 	Matrix4x4 world;
 	Matrix4x4 view;
 	Matrix4x4 projection;
-	unsigned int time = 0;
+	Vector4 light_direction;
+	Vector4 camera_position;
 };
 
 void App::OnCreate()
@@ -37,13 +39,13 @@ void App::OnCreate()
 	Input::GetInstance()->ShowCursor(false);
 
 	m_texture = Engine::GetInstance()->GetTextureManager()->CreateTextureFromFile(L"Assets\\Textures\\brick.png");
-	m_mesh = Engine::GetInstance()->GetMeshManager()->CreateMeshFromFile(L"Assets\\Meshes\\teapot.obj");
+	m_mesh = Engine::GetInstance()->GetMeshManager()->CreateMeshFromFile(L"Assets\\Meshes\\statue.obj");
 
 	RECT rect = GetClientWindowRect();
 	m_swap_chain = Engine::GetInstance()->GetGraphics()->CreateSwapChain(m_hwnd, rect.right - rect.left, rect.bottom - rect.top);
 	assert(m_swap_chain);
 
-	m_world_camera.SetTranslation(Vector3(0.0f, 0.0f, -2.0f));
+	m_world_camera.SetTranslation(Vector3(0.0f, 0.0f, -1.0f));
 
 	Vector3 position[] =
 	{
@@ -154,7 +156,6 @@ void App::OnCreate()
 	assert(m_index_buffer);
 
 	Constant constant;
-	constant.time = 0;
 	m_constant_buffer = Engine::GetInstance()->GetGraphics()->CreateConstantBuffer(&constant, sizeof(Constant));
 	assert(m_constant_buffer);
 	assert(&constant);
@@ -278,7 +279,7 @@ void App::OnRightButtonDown(const Point& point)
 void App::Update()
 {
 	Constant constant;
-	constant.time = static_cast<unsigned int>(::GetTickCount64());
+	//constant.time = static_cast<unsigned int>(::GetTickCount64());
 
 	m_delta_position += m_delta_time / 10.0f;
 	if (m_delta_position >= 1.0f)
@@ -304,6 +305,14 @@ void App::Update()
 	temp.SetIdentity();
 	temp.SetRotationZ(m_rotation_z);
 	constant.world *= temp;*/
+
+	Matrix4x4 light_rotation_matrix;
+	light_rotation_matrix.SetIdentity();
+	light_rotation_matrix.SetRotationY(m_light_rotation_y);
+
+	m_light_rotation_y += 0.785f * m_delta_time;
+
+	constant.light_direction = light_rotation_matrix.GetZDirection();
 	
 	constant.world.SetIdentity();
 
@@ -318,11 +327,13 @@ void App::Update()
 	temp.SetRotationY(m_rotation_y);
 	world_camera *= temp;
 
-	Vector3 new_position = m_world_camera.GetTranslation() + world_camera.GetZDirection() * (m_forward * 0.3f);
+	Vector3 new_position = m_world_camera.GetTranslation() + world_camera.GetZDirection() * (m_forward * 0.01f);
 
-	new_position = new_position + world_camera.GetXDirection() * (m_rightward * 0.3f);
+	new_position = new_position + world_camera.GetXDirection() * (m_rightward * 0.01f);
 
 	world_camera.SetTranslation(new_position);
+
+	constant.camera_position = new_position;
 
 	m_world_camera = world_camera;
 

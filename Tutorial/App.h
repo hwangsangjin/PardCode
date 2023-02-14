@@ -50,6 +50,7 @@ private:
 	float m_delta_rotation = 0.0f;
 	float m_rotation_x = 0.0f;
 	float m_rotation_y = 0.0f;
+	float m_light_rotation_y = 0.0f;
 	float m_rotation_z = 0.0f;
 	float m_scale_cube = 1.0f;
 	float m_forward = 0.0f;
