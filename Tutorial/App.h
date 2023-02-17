@@ -16,6 +16,7 @@ class App : public Window
 public:
 	virtual void OnCreate() override;
 	virtual void OnUpdate() override;
+	virtual void OnSize() override;
 	virtual void OnFocus() override;
 	virtual void OnKillFocus() override;
 	virtual void OnDestroy() override;
@@ -35,7 +36,9 @@ public:
 	void UpdateModel();
 	void UpdateSkyBox();
 
-	void Render(const MeshPtr& mesh, const TexturePtr& texture, const VertexShaderPtr& vertex_shader, const PixelShaderPtr& pixel_shader, const ConstantBufferPtr& constant_buffer);
+	void Render();
+
+	void DrawMesh(const MeshPtr& mesh, const TexturePtr& texture, const VertexShaderPtr& vertex_shader, const PixelShaderPtr& pixel_shader, const ConstantBufferPtr& constant_buffer);
 
 private:
 	SwapChainPtr m_swap_chain = nullptr;
@@ -68,5 +71,8 @@ private:
 	Matrix4x4 m_world = {};
 	Matrix4x4 m_view = {};
 	Matrix4x4 m_projection = {};
+
+	bool m_play_state = false;
+	bool m_fullscreen_state = false;
 };
 

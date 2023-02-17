@@ -36,6 +36,8 @@ void App::OnCreate()
 	Window::OnCreate();
 
 	Input::GetInstance()->AddListener(this);
+
+	m_play_state = true;
 	Input::GetInstance()->ShowCursor(false);
 
 	m_mesh = Engine::GetInstance()->GetMeshManager()->CreateMeshFromFile(L"Assets\\Meshes\\suzanne.obj");
@@ -83,32 +85,15 @@ void App::OnCreate()
 void App::OnUpdate()
 {
 	Window::OnUpdate();
-
 	Input::GetInstance()->Update();
+	this->Render();
+}
 
-	// 프레임 설정
-	m_old_delta = m_new_delta;
-	m_new_delta = static_cast<float>(::GetTickCount64());
-	m_delta_time = m_old_delta ? (m_new_delta - m_old_delta) / 1000.0f : 0.0f;
-
-	// 렌더 타겟 지우기
-	Engine::GetInstance()->GetGraphics()->GetDeviceContext()->ClearRenderTargetColor(m_swap_chain, 0.0f, 0.0f, 0.0f, 1.0f);
-
-	// 뷰포트 설정
-	RECT rect = GetClientWindowRect();
-	Engine::GetInstance()->GetGraphics()->GetDeviceContext()->SetViewportSize(static_cast<UINT>(rect.right - rect.left), static_cast<UINT>(rect.bottom - rect.top));
-
-	// 변환 행렬 계산
-	Update();
-
-	// 렌더링
-	Engine::GetInstance()->GetGraphics()->SetRasterizerState(false);
-	Render(m_mesh, m_texture, m_vertex_shader, m_pixel_shader, m_constant_buffer);
-	Engine::GetInstance()->GetGraphics()->SetRasterizerState(true);
-	Render(m_skybox_mesh, m_skybox_texture, m_vertex_shader, m_skybox_pixel_shader, m_skybox_constant_buffer);
-
-	// 페이지 플리핑
-	m_swap_chain->Present(true);
+void App::OnSize()
+{
+	RECT rect = this->GetClientWindowRect();
+	m_swap_chain->Resize(rect.right, rect.bottom);
+	OnUpdate();
 }
 
 void App::OnFocus()
@@ -119,6 +104,7 @@ void App::OnFocus()
 void App::OnKillFocus()
 {
 	Input::GetInstance()->RemoveListener(this);
+	m_swap_chain->SetFullScreen(false, 1, 1);
 }
 
 void App::OnDestroy()
@@ -130,6 +116,19 @@ void App::OnKeyUp(int key)
 {
 	m_forward = 0.0f;
 	m_rightward = 0.0f;
+
+	if (key == 'G')
+	{
+		m_play_state = m_play_state ? false : true;
+		Input::GetInstance()->ShowCursor(!m_play_state);
+	}
+	else if (key == 'F')
+	{
+		m_fullscreen_state = (m_fullscreen_state) ? false : true;
+		RECT size_screen = GetScreenSize();
+
+		m_swap_chain->SetFullScreen(m_fullscreen_state, size_screen.right, size_screen.bottom);
+	}
 }
 
 void App::OnKeyDown(int key)
@@ -154,6 +153,9 @@ void App::OnKeyDown(int key)
 
 void App::OnMouseMove(const Point& point)
 {
+	if (!m_play_state)
+		return;
+
 	int width = GetClientWindowRect().right - GetClientWindowRect().left;
 	int height = GetClientWindowRect().bottom - GetClientWindowRect().top;
 
@@ -165,22 +167,18 @@ void App::OnMouseMove(const Point& point)
 
 void App::OnLeftButtonUp(const Point& point)
 {
-	m_scale_cube = 1.0f;
 }
 
 void App::OnLeftButtonDown(const Point& point)
 {
-	m_scale_cube = 0.5f;
 }
 
 void App::OnRightButtonUp(const Point& point)
 {
-	m_scale_cube = 1.0f;
 }
 
 void App::OnRightButtonDown(const Point& point)
 {
-	m_scale_cube = 2.0f;
 }
 
 void App::Update()
@@ -218,6 +216,8 @@ void App::UpdateCamera()
 	int width = GetClientWindowRect().right - GetClientWindowRect().left;
 	int height = GetClientWindowRect().bottom - GetClientWindowRect().top;
 
+	m_projection.SetPerspectiveProjection(1.57f, ((float)width / (float)height), 0.1f, 100.0f);
+
 	/*constant.projection.SetOrthographicProjection
 	(
 		(GetClientWindowRect().right - GetClientWindowRect().left) / 300.0f,
@@ -225,8 +225,6 @@ void App::UpdateCamera()
 		-4.0f,
 		4.0f
 	);*/
-
-	m_projection.SetPerspectiveProjection(1.57f, ((float)width / (float)height), 0.1f, 100.0f);
 }
 
 void App::UpdateModel()
@@ -259,7 +257,34 @@ void App::UpdateSkyBox()
 	m_skybox_constant_buffer->Update(Engine::GetInstance()->GetGraphics()->GetDeviceContext(), &constant);
 }
 
-void App::Render(const MeshPtr& mesh, const TexturePtr& texture, const VertexShaderPtr& vertex_shader, const PixelShaderPtr& pixel_shader, const ConstantBufferPtr& constant_buffer)
+void App::Render()
+{
+	// 프레임 설정
+	m_old_delta = m_new_delta;
+	m_new_delta = static_cast<float>(::GetTickCount64());
+	m_delta_time = m_old_delta ? (m_new_delta - m_old_delta) / 1000.0f : 0.0f;
+
+	// 렌더 타겟 지우기
+	Engine::GetInstance()->GetGraphics()->GetDeviceContext()->ClearRenderTargetColor(m_swap_chain, 0.0f, 0.0f, 0.0f, 1.0f);
+
+	// 뷰포트 설정
+	RECT rect = GetClientWindowRect();
+	Engine::GetInstance()->GetGraphics()->GetDeviceContext()->SetViewportSize(static_cast<UINT>(rect.right - rect.left), static_cast<UINT>(rect.bottom - rect.top));
+
+	// 변환 행렬 계산
+	Update();
+
+	// 렌더링
+	Engine::GetInstance()->GetGraphics()->SetRasterizerState(false);
+	DrawMesh(m_mesh, m_texture, m_vertex_shader, m_pixel_shader, m_constant_buffer);
+	Engine::GetInstance()->GetGraphics()->SetRasterizerState(true);
+	DrawMesh(m_skybox_mesh, m_skybox_texture, m_vertex_shader, m_skybox_pixel_shader, m_skybox_constant_buffer);
+
+	// 페이지 플리핑
+	m_swap_chain->Present(true);
+}
+
+void App::DrawMesh(const MeshPtr& mesh, const TexturePtr& texture, const VertexShaderPtr& vertex_shader, const PixelShaderPtr& pixel_shader, const ConstantBufferPtr& constant_buffer)
 {
 	// 상수 버퍼 설정
 	Engine::GetInstance()->GetGraphics()->GetDeviceContext()->SetConstantBuffer(vertex_shader, constant_buffer);

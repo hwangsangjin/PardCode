@@ -13,9 +13,11 @@ public:
 	bool IsRunning();
 
 	RECT GetClientWindowRect() const;
+	RECT GetScreenSize() const;
 
 	virtual void OnCreate();
 	virtual void OnUpdate();
+	virtual void OnSize();
 	virtual void OnFocus();
 	virtual void OnKillFocus();
 	virtual void OnDestroy();

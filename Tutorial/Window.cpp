@@ -11,6 +11,14 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam)
         // 윈도우가 생성될 때 실행되는 이벤트
         break;
     }
+    case WM_SIZE:
+    {
+        // 윈도우의 크기를 변경할 때 실행되는 이벤트
+        Window* window = (Window*)GetWindowLongPtr(hwnd, GWLP_USERDATA);
+        if (window)
+            window->OnSize();
+        break;
+    }
     case WM_SETFOCUS:
     {
         // 윈도우에 포커스가 있을 때 실행되는 이벤트
@@ -63,7 +71,7 @@ Window::Window()
         throw std::exception("Window class not registered successfully");
 
     // 윈도우 생성
-    m_hwnd = ::CreateWindowEx(WS_EX_OVERLAPPEDWINDOW, L"Tutorial", L"Tutorial", WS_CAPTION | WS_SYSMENU, CW_USEDEFAULT, CW_USEDEFAULT, 1024, 768, NULL, NULL, NULL, NULL);
+    m_hwnd = ::CreateWindowEx(WS_EX_OVERLAPPEDWINDOW, L"Tutorial", L"Tutorial", WS_OVERLAPPEDWINDOW, CW_USEDEFAULT, CW_USEDEFAULT, 1024, 768, NULL, NULL, NULL, NULL);
 
     // 윈도우 생성을 실패한 경우
     if (!m_hwnd)
@@ -121,11 +129,24 @@ RECT Window::GetClientWindowRect() const
     return rc;
 }
 
+RECT Window::GetScreenSize() const
+{
+    RECT rect;
+    rect.right = GetSystemMetrics(SM_CXSCREEN);
+    rect.bottom = GetSystemMetrics(SM_CYSCREEN);
+
+    return rect;
+}
+
 void Window::OnCreate()
 {
 }
 
 void Window::OnUpdate()
+{
+}
+
+void Window::OnSize()
 {
 }
 
